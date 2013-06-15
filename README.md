@@ -2,12 +2,14 @@
 
 This module allows you to control web app using speech commands.
 
+Module is still under develop.
+
 ## References
 
 I recomend you to read:
 
-    - [A More Awesome Web](http://moreawesomeweb.com) by Eric Bidelman
-    - [Voice Driven Web Apps](http://updates.html5rocks.com/2013/01/Voice-Driven-Web-Apps-Introduction-to-the-Web-Speech-API) article from HTML5 ROCKS by Glen Shires
+- [A More Awesome Web](http://moreawesomeweb.com) presentation from Google IO 2013 by Eric Bidelman
+- [Voice Driven Web Apps](http://updates.html5rocks.com/2013/01/Voice-Driven-Web-Apps-Introduction-to-the-Web-Speech-API) article from HTML5 ROCKS by Glen Shires
 
 # Requirements
 
@@ -15,7 +17,7 @@ I recomend you to read:
 
 # Usage
 
-We use [bower](http://twitter.github.com/bower/) for dependency management.  Add
+We use [bower](http://twitter.github.com/bower/) for dependency management. Add
 
     dependencies: {
         "angular-adaptive-speech": "latest"
