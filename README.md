@@ -2,12 +2,11 @@
 
 This module allows you to control web app using speech commands.
 
-Module is still under develop.
+Module is still under development.
 
 #### References
 
-I recomend you to read:
-
+We recomend you to read:
 - [A More Awesome Web](http://moreawesomeweb.com) presentation from Google IO 2013 by Eric Bidelman
 - [Voice Driven Web Apps](http://updates.html5rocks.com/2013/01/Voice-Driven-Web-Apps-Introduction-to-the-Web-Speech-API) article from HTML5 ROCKS by Glen Shires
 
@@ -92,17 +91,19 @@ All the speechRecognition options can be set up in your controller.
 
 # Testing
 
-We use karma and jshint to ensure the quality of the code.  The easiest way to run these checks is to use grunt:
+More tests will be added...
+
+We use karma and jshint to ensure the quality of the code. The easiest way to run these checks is to use grunt:
 
   npm install -g grunt-cli
   npm install
   bower install
   grunt
 
-The karma task will try to open Chrome as a browser in which to run the tests.  Make sure this is available or change the configuration in `test\test.config.js` 
+The karma task will try to open Chrome as a browser in which to run the tests. Make sure this is available or change the configuration in `test/test.config.js` 
 
 # License
 
 The MIT License
 
-Copyright (c) 2013 the Jan Antala, https://github.com/janantala
+Copyright (c) 2013 Jan Antala, https://github.com/janantala
