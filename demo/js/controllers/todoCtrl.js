@@ -6,7 +6,7 @@
  * - retrieves and persists the model via the todoStorage service
  * - exposes the model to the template and provides event handlers
  */
-todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage, filterFilter) {
+todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage, filterFilter, $speechRecognition) {
 	var todos = $scope.todos = todoStorage.get();
 
 	$scope.newTodo = '';
@@ -31,6 +31,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 
 	$scope.addTodo = function () {
 		var newTodo = $scope.newTodo.trim();
+		console.log(newTodo);
 		if (newTodo.length === 0) {
 			return;
 		}
@@ -40,7 +41,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			completed: false
 		});
 		todoStorage.put(todos);
-
+		console.log(todos);
 		$scope.newTodo = '';
 		$scope.remainingCount++;
 	};
@@ -89,4 +90,90 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 		$scope.remainingCount = completed ? 0 : todos.length;
 		todoStorage.put(todos);
 	};
+
+	/**
+	 * Need to be added for speech recognition
+	 */
+
+	var LANG = 'en-US';
+	$speechRecognition.onstart(function(){
+		$speechRecognition.speak('Yes? How can I help you?');
+	});
+	$speechRecognition.payAttention();
+	$speechRecognition.setLang(LANG);
+	$speechRecognition.listen();
+
+	$scope.recognition = {};
+	$scope.recognition['en-US'] = {
+		'addToList': {
+			'regex': /^to do .+/gi,
+			'lang': 'en-US',
+			'call': function(utterance){
+				var parts = utterance.split(' ');
+				if (parts.length > 2) {
+					$scope.newTodo = parts.slice(2).join(' ');
+					$scope.addTodo();
+					$scope.$apply();
+				}
+			}
+		},
+		'show-all': {
+			'regex': /show.*all+/gi,
+			'lang': 'en-US',
+			'call': function(utterance){
+				$location.path('/');
+			}
+		},
+		'show-active': {
+			'regex': /show.*active+/gi,
+			'lang': 'en-US',
+			'call': function(utterance){
+				$location.path('/active');
+			}
+		},
+		'show-completed': {
+			'regex': /show.*complete+/gi,
+			'lang': 'en-US',
+			'call': function(utterance){
+				$location.path('/completed');
+			}
+		},
+		'mark-all': {
+			'regex': /^mark+/gi,
+			'lang': 'en-US',
+			'call': function(utterance){
+				$scope.markAll(1);
+				$scope.$apply();
+			}
+		},
+		'unmark-all': {
+			'regex': /^unmark+/gi,
+			'lang': 'en-US',
+			'call': function(utterance){
+				$scope.markAll(1);
+				$scope.$apply();
+			}
+		},
+		'listTasks': [{
+			'regex': /^complete .+/gi,
+			'lang': 'en-US',
+			'call': function(utterance){
+				$scope.completeTask(utterance);
+			}
+		},{
+			'regex': /^remove .+/gi,
+			'lang': 'en-US',
+			'call': function(utterance){
+				$scope.removeTask(utterance);
+			}
+		}]
+	};
+
+	$speechRecognition.listenUtterance($scope.recognition['en-US']['addToList']);
+	$speechRecognition.listenUtterance($scope.recognition['en-US']['show-all']);
+	$speechRecognition.listenUtterance($scope.recognition['en-US']['show-active']);
+	$speechRecognition.listenUtterance($scope.recognition['en-US']['show-completed']);
+	$speechRecognition.listenUtterance($scope.recognition['en-US']['mark-all']);
+	$speechRecognition.listenUtterance($scope.recognition['en-US']['unmark-all']);
+
 });
