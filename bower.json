@@ -16,9 +16,9 @@
     "package.json"
   ],
   "dependencies": {
-    "angular": "~1.x",
+    "angular": "~1.x"
   },
   "devDependencies": {
     "angular-mocks": "~1.x"
-  },
+  }
 }
