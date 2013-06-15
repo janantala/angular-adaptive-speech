@@ -36,7 +36,7 @@ Add the adaptive.speech module as a dependency to your application module:
 
     var myAppModule = angular.module('MyApp', ['adaptive.speech']);
 
-To start speech rocognition run:
+To start speech recognition run:
 
     var LANG = 'en-US';
     $speechRecognition.onstart(function(){
