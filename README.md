@@ -1,8 +1,8 @@
 # adaptive-speech [![Build Status](https://travis-ci.org/angular-adaptive/adaptive-speech.png)](https://travis-ci.org/angular-adaptive/adaptive-speech)
 
-This module allows you to control web app using speech commands.
+This module allows you to control web app using speech commands. It's based on Chrome's speech recognition API.
 
-Module is still under development.
+Module is still under development, but you can try it today.
 
 #### References
 
@@ -26,10 +26,10 @@ To your `bower.json` file. Then run
 
     bower install
 
-This will copy the ui-tinymce files into your `components` folder, along with its dependencies. Load the script files in your application:
+This will copy the speech recognition files into your `components` folder, along with its dependencies. Load the script files in your application:
 
     <script type="text/javascript" src="components/angular/angular.js"></script>
-    <script type="text/javascript" src="components/angular-adaptive-speech/adaptive-speech.js"></script>
+    <script type="text/javascript" src="components/angular-adaptive-speech/src/adaptive-speech.js"></script>
 
 Add the adaptive.speech module as a dependency to your application module:
 
