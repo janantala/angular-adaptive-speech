@@ -35,7 +35,13 @@ Add the adaptive.speech module as a dependency to your application module:
 
     var myAppModule = angular.module('MyApp', ['adaptive.speech']);
 
-To start speech recognition run:
+and include $speechRecognition service as a dependency to your controller:
+
+    angular.module('MyApp').controller('MainCtrl', function ['$scope', '$speechRecognition', ($scope, $speechRecognition) {
+
+    }]);
+
+To start speech recognition run from controller:
 
     var LANG = 'en-US';
     $speechRecognition.onstart(function(){
@@ -84,10 +90,6 @@ All the speechRecognition options can be set up in your controller.
             }]
         };
     });
-
-    <ul>
-      <li speechrecognition="{'tasks': recognition['en-US']['listTasks'], 'thing': thing}>{{thing}}</li>
-    </ul>
 
 # Testing
 
