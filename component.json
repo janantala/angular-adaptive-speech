@@ -1,0 +1,24 @@
+{
+  "name": "angular-adaptive-speech",
+  "version": "0.1.0",
+  "description": "This module allows you to control web app using speech commands.",
+  "author": "https://github.com/angular-adaptive/adaptive-speech/graphs/contributors",
+  "license": "MIT",
+  "homepage": "http://angular-adaptive.github.io",
+  "main": "./src/adaptive-speech.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "test*",
+    "demo*",
+    "gruntFile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "angular": "~1.x",
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.x"
+  },
+}
