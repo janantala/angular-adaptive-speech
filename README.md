@@ -4,7 +4,7 @@ This module allows you to control web app using speech commands.
 
 Module is still under develop.
 
-## References
+#### References
 
 I recomend you to read:
 
@@ -101,3 +101,8 @@ We use karma and jshint to ensure the quality of the code.  The easiest way to r
 
 The karma task will try to open Chrome as a browser in which to run the tests.  Make sure this is available or change the configuration in `test\test.config.js` 
 
+# License
+
+The MIT License
+
+Copyright (c) 2013 the Jan Antala, https://github.com/janantala

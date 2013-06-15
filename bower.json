@@ -12,7 +12,7 @@
     "components",
     "test*",
     "demo*",
-    "gruntFile.js",
+    "Gruntfile.js",
     "package.json"
   ],
   "dependencies": {
