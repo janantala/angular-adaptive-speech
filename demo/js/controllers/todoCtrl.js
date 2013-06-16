@@ -94,52 +94,75 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 	/**
 	 * Need to be added for speech recognition
 	 */
+	
+	var findTodo = function(title){
+		for (var i=0; i<todos.length; i++){
+			if (todos[i].title == title) {
+				return todos[i];
+			}
+		}
+		return null;
+	};
+
+	var completeTodo = function(title){
+		for (var i=0; i<todos.length; i++){
+			if (todos[i].title == title) {
+				todos[i].completed = ! todos[i].completed;
+				$scope.todoCompleted(todos[i]);
+				$scope.$apply();
+				return true;
+			}
+		}
+	};
 
 	var LANG = 'en-US';
 	$speechRecognition.onstart(function(){
 		$speechRecognition.speak('Yes? How can I help you?');
 	});
 	$speechRecognition.payAttention();
-	$speechRecognition.setLang(LANG);
+	// $speechRecognition.setLang(LANG);
 	$speechRecognition.listen();
 
 	$scope.recognition = {};
 	$scope.recognition['en-US'] = {
 		'addToList': {
-			'regex': /^to do .+/gi,
+			'regex': /^do .+/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
 				var parts = utterance.split(' ');
-				if (parts.length > 2) {
-					$scope.newTodo = parts.slice(2).join(' ');
+				if (parts.length > 1) {
+					$scope.newTodo = parts.slice(1).join(' ');
 					$scope.addTodo();
 					$scope.$apply();
 				}
 			}
 		},
 		'show-all': {
-			'regex': /show.*all+/gi,
+			'regex': /show.*all/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$location.path('/');
+				$scope.$apply();
 			}
 		},
 		'show-active': {
-			'regex': /show.*active+/gi,
+			'regex': /show.*active/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$location.path('/active');
+				$scope.$apply();
 			}
 		},
 		'show-completed': {
-			'regex': /show.*complete+/gi,
+			'regex': /show.*complete/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$location.path('/completed');
+				$scope.$apply();
 			}
 		},
 		'mark-all': {
-			'regex': /^mark+/gi,
+			'regex': /^mark/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$scope.markAll(1);
@@ -147,10 +170,18 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			}
 		},
 		'unmark-all': {
-			'regex': /^unmark+/gi,
+			'regex': /^unmark/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$scope.markAll(1);
+				$scope.$apply();
+			}
+		},
+		'clear-completed': {
+			'regex': /clear/gi,
+			'lang': 'en-US',
+			'call': function(utterance){
+				$scope.clearCompletedTodos();
 				$scope.$apply();
 			}
 		},
@@ -158,13 +189,26 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			'regex': /^complete .+/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
-				$scope.completeTask(utterance);
+				var parts = utterance.split(' ');
+				if (parts.length > 1) {
+					console.log(JSON.stringify(todos));
+					console.log(JSON.stringify($scope.todos));
+					completeTodo(parts.slice(1).join(' '));
+				}
 			}
 		},{
 			'regex': /^remove .+/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
-				$scope.removeTask(utterance);
+				var parts = utterance.split(' ');
+				if (parts.length > 1) {
+					var todo = findTodo(parts.slice(1).join(' '));
+					console.log(todo);
+					if (todo) {
+						$scope.removeTodo(todo);
+						$scope.$apply();
+					}
+				}
 			}
 		}]
 	};
@@ -175,5 +219,9 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 	$speechRecognition.listenUtterance($scope.recognition['en-US']['show-completed']);
 	$speechRecognition.listenUtterance($scope.recognition['en-US']['mark-all']);
 	$speechRecognition.listenUtterance($scope.recognition['en-US']['unmark-all']);
+	$speechRecognition.listenUtterance($scope.recognition['en-US']['clear-completed']);
+
+	console.log(JSON.stringify(todos));
+					console.log(JSON.stringify($scope.todos));
 
 });
