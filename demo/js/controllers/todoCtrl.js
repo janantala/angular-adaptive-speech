@@ -123,8 +123,6 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 	// $speechRecognition.setLang(LANG);
 	$speechRecognition.listen();
 
-	var lastUtterance;
-
 	$scope.recognition = {};
 	$scope.recognition['en-US'] = {
 		'addToList': {
@@ -191,16 +189,6 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			'regex': /^complete .+/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
-				if (lastUtterance == utterance) {
-					return false;
-				}
-				lastUtterance = utterance;
-				window.setTimeout(function(){
-					if (lastUtterance == utterance) {
-						lastUtterance = null;
-					}
-				}, 1000);
-
 				var parts = utterance.split(' ');
 				if (parts.length > 1) {
 					console.log(JSON.stringify(todos));
@@ -212,16 +200,6 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			'regex': /^remove .+/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
-				if (lastUtterance == utterance) {
-					return false;
-				}
-				lastUtterance = utterance;
-				window.setTimeout(function(){
-					if (lastUtterance == utterance) {
-						lastUtterance = null;
-					}
-				}, 1000);
-
 				var parts = utterance.split(' ');
 				if (parts.length > 1) {
 					var todo = findTodo(parts.slice(1).join(' '));
@@ -242,8 +220,5 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 	$speechRecognition.listenUtterance($scope.recognition['en-US']['mark-all']);
 	$speechRecognition.listenUtterance($scope.recognition['en-US']['unmark-all']);
 	$speechRecognition.listenUtterance($scope.recognition['en-US']['clear-completed']);
-
-	console.log(JSON.stringify(todos));
-					console.log(JSON.stringify($scope.todos));
 
 });
