@@ -2,9 +2,13 @@
 
 This module allows you to control web app using speech commands. It's based on Chrome's speech recognition API.
 
-Module is still under development, but you can try it today.
+Module is still under development, but you can use it today.
 
-#### References
+### Demo
+
+Check out http://angular-adaptive.github.io/adaptive-speech/demo/
+
+### References
 
 We recomend you to read:
 - [A More Awesome Web](http://moreawesomeweb.com) presentation from Google IO 2013 by Eric Bidelman
