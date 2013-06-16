@@ -1,0 +1,35 @@
+{
+  "name": "angular-adaptive-speech",
+  "version": "0.0.0",
+  "description": "This module allows you to control web app using speech commands.",
+  "author": {
+    "name": "https://github.com/angular-adaptive/adaptive-speech/graphs/contributors"
+  },
+  "license": "MIT",
+  "homepage": "http://angular-adaptive.github.io",
+  "main": "./src/adaptive-speech.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "test*",
+    "demo*",
+    "Gruntfile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "angular": "~1.x"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.x"
+  },
+  "gitHead": "f08f33ee87d535c65b7147e10bb2cc73b513051c",
+  "readme": "# adaptive-speech [![Build Status](https://travis-ci.org/angular-adaptive/adaptive-speech.png)](https://travis-ci.org/angular-adaptive/adaptive-speech)\n\nThis module allows you to control web app using speech commands. It's based on Chrome's speech recognition API.\n\nModule is still under development, but you can try it today.\n\n#### References\n\nWe recomend you to read:\n- [A More Awesome Web](http://moreawesomeweb.com) presentation from Google IO 2013 by Eric Bidelman\n- [Voice Driven Web Apps](http://updates.html5rocks.com/2013/01/Voice-Driven-Web-Apps-Introduction-to-the-Web-Speech-API) article from HTML5 ROCKS by Glen Shires\n\n# Requirements\n\n- AngularJS v 1.0+\n\n# Usage\n\nWe use [bower](http://twitter.github.com/bower/) for dependency management. Add\n\n    dependencies: {\n        \"angular-adaptive-speech\": \"latest\"\n    }\n\nTo your `bower.json` file. Then run\n\n    bower install\n\nThis will copy the speech recognition files into your `components` folder, along with its dependencies. Load the script files in your application:\n\n    <script type=\"text/javascript\" src=\"components/angular/angular.js\"></script>\n    <script type=\"text/javascript\" src=\"components/angular-adaptive-speech/src/adaptive-speech.js\"></script>\n\nAdd the adaptive.speech module as a dependency to your application module:\n\n    var myAppModule = angular.module('MyApp', ['adaptive.speech']);\n\nand include $speechRecognition service as a dependency to your controller:\n\n    angular.module('MyApp').controller('MainCtrl', function ['$scope', '$speechRecognition', ($scope, $speechRecognition) {\n\n    }]);\n\nTo start speech recognition run from controller:\n\n    var LANG = 'en-US';\n    $speechRecognition.onstart(function(){\n      $speechRecognition.speak('Yes? How can I help you?');\n    });\n    $speechRecognition.payAttention();\n    $speechRecognition.setLang(LANG);\n    $speechRecognition.listen();\n\nApply the directive to your elements:\n\n    <ul>\n      <li speechrecognition=\"{'tasks': recognition['en-US']['listTasks'], 'thing': thing}>{{thing}}</li>\n    </ul>\n\nOr run recognition directly from controller:\n\n    $speechRecognition.listenUtterance($scope.recognition['en-US']['addToList']);\n\n## Options\n\nAll the speechRecognition options can be set up in your controller.\n\n    myAppModule.controller('MyController', function($scope) {\n        $scope.recognition = {};\n        $scope.recognition['en-US'] = {\n            'addToList': {\n                'regex': /^to do .+/gi,\n                'lang': 'en-US',\n                'call': function(e){\n                    $scope.addToList(e);\n                }\n            },\n            'listTasks': [{\n                'regex': /^complete .+/gi,\n                'lang': 'en-US',\n                'call': function(e){\n                    $scope.completeTask(e);\n                }\n            },{\n                'regex': /^remove .+/gi,\n                'lang': 'en-US',\n                'call': function(e){\n                    $scope.removeTask(e);\n                }\n            }]\n        };\n    });\n\n# Testing\n\nMore tests will be added...\n\nWe use karma and jshint to ensure the quality of the code. The easiest way to run these checks is to use grunt:\n\n  npm install -g grunt-cli\n  npm install\n  bower install\n  grunt\n\nThe karma task will try to open Chrome as a browser in which to run the tests. Make sure this is available or change the configuration in `test/test.config.js` \n\n# License\n\nThe MIT License\n\nCopyright (c) 2013 Jan Antala, https://github.com/janantala",
+  "readmeFilename": "README.md",
+  "_id": "angular-adaptive-speech@0.1.1",
+  "commit": "f08f33ee87d535c65b7147e10bb2cc73b513051c",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/angular-adaptive/adaptive-speech.git"
+  }
+}
