@@ -199,7 +199,7 @@ adaptive.directive('speechrecognition', ['$rootScope', 'DEST_LANG', function ($r
           var utterance = data.utterance;
           console.log(regex, utterance.match(regex));
 
-          if (utterance.match(regex)) {
+          if (utterance.match(regex) && utterance.match(new RegExp(opts.thing, 'ig'))) {
             command.call(utterance);
           }
         });
