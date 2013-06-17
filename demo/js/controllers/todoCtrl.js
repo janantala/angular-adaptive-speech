@@ -116,8 +116,11 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 	};
 
 	var LANG = 'en-US';
-	$speechRecognition.onstart(function(){
+	$speechRecognition.onstart(function(e){
 		$speechRecognition.speak('Yes? How can I help you?');
+	});
+	$speechRecognition.onerror(function(e){
+		alert('An error occurred ' + e.msg);
 	});
 	$speechRecognition.payAttention();
 	// $speechRecognition.setLang(LANG);

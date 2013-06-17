@@ -42,6 +42,9 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
 
     recognizer.onerror = function(e) {
       console.log(e);
+      if (onerror) {
+        onerror(e);
+      }
     };
   };
 
@@ -103,7 +106,7 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
     recognizer.lang = lang;
   };
 
-  var onstart;
+  var onstart, onerror;
 
   var onend = function(e){
     payingAttention = false;
@@ -154,6 +157,10 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
   return {
     onstart: function(fn){
       onstart = fn;
+    },
+
+    onerror: function(fn){
+      onerror = fn;
     },
 
     setLang: function(lang){
