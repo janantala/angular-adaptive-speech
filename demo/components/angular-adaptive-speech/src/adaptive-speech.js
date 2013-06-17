@@ -6,7 +6,12 @@ adaptive.value('DEST_LANG', 'en-US');
 
 adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($rootScope, DEST_LANG) {
 
-  window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var SpeechRecognitionMock = function(){
+    this.start = function() { this.onerror({'code': 0, 'msg': 'speech recognition is not supported'}); }.bind(this);
+    this.stop = function() { this.onerror({'code': 0, 'msg': 'speech recognition is not supported'}); }.bind(this);
+  };
+
+  window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || SpeechRecognitionMock;
 
   var recognizer;
 
