@@ -7,8 +7,8 @@ adaptive.value('DEST_LANG', 'en-US');
 adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($rootScope, DEST_LANG) {
 
   var SpeechRecognitionMock = function(){
-    this.start = function() { this.onerror({'code': 0, 'msg': 'speech recognition is not supported'}); }.bind(this);
-    this.stop = function() { this.onerror({'code': 0, 'msg': 'speech recognition is not supported'}); }.bind(this);
+    this.start = function() { this.onerror({'code': 0, 'error': 'speech recognition is not supported'}); }.bind(this);
+    this.stop = function() { this.onerror({'code': 0, 'error': 'speech recognition is not supported'}); }.bind(this);
   };
 
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || SpeechRecognitionMock;
@@ -134,22 +134,32 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
     }
   };
 
-  var listenUtterance = function(command){
+  var listenUtterance = function(tasks){
     $rootScope.$on('adaptive.speech:utterance', function(e, data){
 
-      console.log(data);
-      console.log(command);
-      if (command.lang !== DEST_LANG) {
-        return false;
+      var array = [];
+      if (angular.isArray(tasks)) {
+        array = tasks;
+      }
+      else {
+        array.push(tasks);
       }
 
-      var regex = command.regex || null;
-      var utterance = data.utterance;
-      console.log(regex, utterance.match(regex));
+      array.forEach(function(command){
+        console.log(data);
+        console.log(command);
+        if (command.lang !== DEST_LANG) {
+          return false;
+        }
 
-      if (utterance.match(regex)) {
-        command.call(utterance);
-      }
+        var regex = command.regex || null;
+        var utterance = data.utterance;
+        console.log(regex, utterance.match(regex));
+
+        if (utterance.match(regex)) {
+          command.call(utterance);
+        }
+      });
     });
   };
 
@@ -183,8 +193,8 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
       stopListening();
     },
 
-    listenUtterance: function(command){
-      listenUtterance(command);
+    listenUtterance: function(tasks){
+      listenUtterance(tasks);
     }
 
   };
@@ -201,17 +211,25 @@ adaptive.directive('speechrecognition', ['$rootScope', 'DEST_LANG', function ($r
       console.log(opts);
       $rootScope.$on('adaptive.speech:utterance', function(e, data){
 
+        var array = [];
+        if (angular.isArray(opts.tasks)) {
+          array = opts.tasks;
+        }
+        else {
+          array.push(tasks);
+        }
+
         console.log(data);
-        opts.tasks.forEach(function(command){
+        array.forEach(function(command){
           if (command.lang !== DEST_LANG) {
             return false;
           }
 
           var regex = command.regex || null;
           var utterance = data.utterance;
-          console.log(regex, utterance.match(regex));
 
           if (utterance.match(regex) && utterance.match(new RegExp(opts.thing, 'ig'))) {
+            console.log(regex, utterance.match(regex), utterance.match(new RegExp(opts.thing, 'ig')));
             command.call(utterance);
           }
         });

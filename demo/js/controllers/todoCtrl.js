@@ -120,7 +120,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 		$speechRecognition.speak('Yes? How can I help you?');
 	});
 	$speechRecognition.onerror(function(e){
-		var error = (e.msg || e.error || '');
+		var error = (e.error || '');
 		alert('An error occurred ' + error);
 	});
 	$speechRecognition.payAttention();
@@ -195,8 +195,6 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			'call': function(utterance){
 				var parts = utterance.split(' ');
 				if (parts.length > 1) {
-					console.log(JSON.stringify(todos));
-					console.log(JSON.stringify($scope.todos));
 					completeTodo(parts.slice(1).join(' '));
 				}
 			}
