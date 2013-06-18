@@ -120,7 +120,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 		$speechRecognition.speak('Yes? How can I help you?');
 	});
 	$speechRecognition.onerror(function(e){
-		alert('An error occurred ' + e.msg);
+		alert('An error occurred ' + (e.msg || e.error || '');
 	});
 	$speechRecognition.payAttention();
 	// $speechRecognition.setLang(LANG);
