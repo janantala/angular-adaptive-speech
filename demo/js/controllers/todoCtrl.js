@@ -1,4 +1,5 @@
 /*global todomvc */
+(function () {
 'use strict';
 
 /**
@@ -97,7 +98,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 	
 	var findTodo = function(title){
 		for (var i=0; i<todos.length; i++){
-			if (todos[i].title == title) {
+			if (todos[i].title === title) {
 				return todos[i];
 			}
 		}
@@ -106,7 +107,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 
 	var completeTodo = function(title){
 		for (var i=0; i<todos.length; i++){
-			if (todos[i].title == title) {
+			if (todos[i].title === title) {
 				todos[i].completed = ! todos[i].completed;
 				$scope.todoCompleted(todos[i]);
 				$scope.$apply();
@@ -224,3 +225,5 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 	$speechRecognition.listenUtterance($scope.recognition['en-US']['clear-completed']);
 
 });
+
+}());
