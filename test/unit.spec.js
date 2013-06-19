@@ -6,8 +6,8 @@ describe('adaptive.speech', function() {
 
   beforeEach(inject(function($rootScope) {
     rootScope = $rootScope;
-    spyOn(rootScope, "$on");
-    spyOn(rootScope, "$broadcast");
+    spyOn(rootScope, "$on").andCallThrough();
+    spyOn(rootScope, "$broadcast").andCallThrough();
   }));
 
   describe('default language', function() {
@@ -57,6 +57,30 @@ describe('adaptive.speech', function() {
       expect(typeof $speechRecognition.listenUtterance).toBe('function');
     });
 
+    describe('onstart(), onerror(), speak(), payAttention(), listen(), stopListening()', function() {
+      it('should call functions', function() {
+        spyOn($speechRecognition, "onstart").andCallThrough();
+        spyOn($speechRecognition, "onerror").andCallThrough();
+        spyOn($speechRecognition, "speak").andCallThrough();
+        spyOn($speechRecognition, "payAttention").andCallThrough();
+        spyOn($speechRecognition, "listen").andCallThrough();
+        spyOn($speechRecognition, "stopListening").andCallThrough();
+
+        $speechRecognition.onstart();
+        expect($speechRecognition.onstart).toHaveBeenCalled();
+        $speechRecognition.onerror();
+        expect($speechRecognition.onerror).toHaveBeenCalled();
+        $speechRecognition.speak();
+        expect($speechRecognition.speak).toHaveBeenCalled();
+        $speechRecognition.payAttention();
+        expect($speechRecognition.payAttention).toHaveBeenCalled();
+        $speechRecognition.listen();
+        expect($speechRecognition.listen).toHaveBeenCalled();
+        $speechRecognition.stopListening();
+        expect($speechRecognition.stopListening).toHaveBeenCalled();
+      });
+    });
+
 
     describe('setLang(), getLang()', function() {
       it('should change a language', function() {
@@ -78,59 +102,51 @@ describe('adaptive.speech', function() {
         expect(rootScope.$broadcast).toHaveBeenCalled();
       });
 
-      /**
-       * rootscope.$on() is not called after rootscope.$broadcast()
-       */
+      it('should call a function after recognition - object', function() {
+        var calledCount = 0;
+        var mockUtterance = {'lang': 'en-US', 'utterance': 'do something'};
+        var mockObject = {
+          'regex': /^do .+/gi,
+          'lang': 'en-US',
+          'call': function(utterance){
+            calledCount += 1;
+          }
+        };
 
+        $speechRecognition.listenUtterance(mockObject);
+        expect(calledCount).toEqual(0);
 
-      // it('should call a function after recognition - object', function() {
-      //   var calledCount = 0;
-      //   var mockUtterance = {'lang': 'en-US', 'utterance': 'do something'};
-      //   var mockObject = {
-      //     'regex': /^do .+/gi,
-      //     'lang': 'en-US',
-      //     'call': function(utterance){
-      //       console.log(utterance);
-      //       calledCount += 1;
-      //     }
-      //   };
+        rootScope.$broadcast('adaptive.speech:utterance', mockUtterance);
+        expect(calledCount).toEqual(1);
+      });
 
-      //   $speechRecognition.listenUtterance(mockObject);
-      //   expect(calledCount).toEqual(0);
+      it('should call a function after recognition - array', function() {
+          var calledCount = 0;
+          var mockUtterance1 = {'lang': 'en-US', 'utterance': 'complete something'};
+          var mockUtterance2 = {'lang': 'en-US', 'utterance': 'clear'};
+          var mockArray = [{
+            'regex': /^complete .+/gi,
+            'lang': 'en-US',
+            'call': function(utterance){
+              calledCount += 1;
+            }
+          },{
+            'regex': /clear.*/gi,
+            'lang': 'en-US',
+            'call': function(utterance){
+              calledCount += 1;
+            }
+          }];
 
-      //   rootScope.$broadcast('adaptive.speech:utterance', mockUtterance);
-      //   expect(calledCount).toEqual(1);
-      // });
+          $speechRecognition.listenUtterance(mockArray);
+          expect(calledCount).toEqual(0);
 
-      // it('should call a function after recognition - array', function() {
-      //     var calledCount = 0;
-      //     var mockUtterance1 = {'lang': 'en-US', 'utterance': 'complete something'};
-      //     var mockUtterance2 = {'lang': 'en-US', 'utterance': 'clear'};
-      //     var mockArray = [{
-      //       'regex': /^complete .+/gi,
-      //       'lang': 'en-US',
-      //       'call': function(utterance){
-      //         console.log(utterance);
-      //         calledCount += 1;
-      //       }
-      //     },{
-      //       'regex': /clear.*/gi,
-      //       'lang': 'en-US',
-      //       'call': function(utterance){
-      //         console.log(utterance);
-      //         calledCount += 1;
-      //       }
-      //     }];
+          rootScope.$broadcast('adaptive.speech:utterance', mockUtterance1);
+          expect(calledCount).toEqual(1);
 
-      //     $speechRecognition.listenUtterance(mockArray);
-      //     expect(calledCount).toEqual(0);
-
-      //     rootScope.$broadcast('adaptive.speech:utterance', mockUtterance1);
-      //     expect(calledCount).toEqual(1);
-
-      //     rootScope.$broadcast('adaptive.speech:utterance', mockUtterance2);
-      //     expect(calledCount).toEqual(2);
-      // });
+          rootScope.$broadcast('adaptive.speech:utterance', mockUtterance2);
+          expect(calledCount).toEqual(2);
+      });
 
     });
 

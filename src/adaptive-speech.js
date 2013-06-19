@@ -55,7 +55,7 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
   var justSpoke = false;
 
   var speak = function(text){
-    if (!text.length) return false;
+    if (!text) return false;
 
     var audioURL = ['http://www.corsproxy.com/', 'translate.google.com/translate_tts?ie=UTF-8&q=', text , '&tl=', DEST_LANG].join('');
     var audio = new Audio();
