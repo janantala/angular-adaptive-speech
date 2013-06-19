@@ -225,7 +225,7 @@ adaptive.directive('speechrecognition', ['$rootScope', 'DEST_LANG', function ($r
           array = opts.tasks;
         }
         else {
-          array.push(tasks);
+          array.push(opts.tasks);
         }
 
         console.log(data);

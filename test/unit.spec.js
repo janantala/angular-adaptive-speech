@@ -150,10 +150,117 @@ describe('adaptive.speech', function() {
 
     });
 
+  });
+
+
+  describe('speechrecognition directive - object', function() {
+    var elm, scope, calledCount;
+
+    beforeEach(inject(function($rootScope, $compile) {
+      elm = angular.element(
+        '<li ng-class="{completed: todo.completed, editing: todo == editedTodo}">' +
+          '<div class="view" speechrecognition="{\'tasks\': mockObject, \'thing\': todo.title}">' +
+            '<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="todoCompleted(todo)">' +
+            '<label ng-dblclick="editTodo(todo)">{{todo.title}}</label>' +
+            '<button class="destroy" ng-click="removeTodo(todo)"></button>' +
+          '</div>' +
+          '<form ng-submit="doneEditing(todo)">' +
+            '<input class="edit" ng-model="todo.title" todo-blur="doneEditing(todo)" todo-focus="todo == editedTodo">' +
+          '</form>' +
+        '</li>'
+      );
+
+      scope = $rootScope;
+
+      scope.todo = {
+        title: 'something',
+        completed: false
+      };
+
+      scope.mockObject = {
+        'regex': /^complete .+/gi,
+        'lang': 'en-US',
+        'call': function(utterance){
+          calledCount += 1;
+        }
+      };
+
+      $compile(elm)(scope);
+      scope.$digest();
+    }));
+
+    it('should have called rootScope.$on', function(){
+      expect(rootScope.$on).toHaveBeenCalled();
+    });
+
+    it('should call a function after recognition', function() {
+      calledCount = 0;
+      var mockUtterance = {'lang': 'en-US', 'utterance': 'complete something'};
+
+      rootScope.$broadcast('adaptive.speech:utterance', mockUtterance);
+      expect(calledCount).toEqual(1);
+    });
 
   });
 
-  describe('speechrecognition directive', function() {
+
+  describe('speechrecognition directive - array', function() {
+    var elm, scope, calledCount;
+
+    beforeEach(inject(function($rootScope, $compile) {
+      elm = angular.element(
+        '<li ng-class="{completed: todo.completed, editing: todo == editedTodo}">' +
+          '<div class="view" speechrecognition="{\'tasks\': mockArray, \'thing\': todo.title}">' +
+            '<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="todoCompleted(todo)">' +
+            '<label ng-dblclick="editTodo(todo)">{{todo.title}}</label>' +
+            '<button class="destroy" ng-click="removeTodo(todo)"></button>' +
+          '</div>' +
+          '<form ng-submit="doneEditing(todo)">' +
+            '<input class="edit" ng-model="todo.title" todo-blur="doneEditing(todo)" todo-focus="todo == editedTodo">' +
+          '</form>' +
+        '</li>'
+      );
+
+      scope = $rootScope;
+
+      scope.todo = {
+        title: 'something',
+        completed: false
+      };
+
+      scope.mockArray = [{
+        'regex': /^complete .+/gi,
+        'lang': 'en-US',
+        'call': function(utterance){
+          calledCount += 1;
+        }
+      },{
+        'regex': /^remove .+/gi,
+        'lang': 'en-US',
+        'call': function(utterance){
+          calledCount += 1;
+        }
+      }];
+
+      $compile(elm)(scope);
+      scope.$digest();
+    }));
+
+    it('should have called rootScope.$on', function(){
+      expect(rootScope.$on).toHaveBeenCalled();
+    });
+
+    it('should call a function after recognition', function() {
+      calledCount = 0;
+      var mockUtterance1 = {'lang': 'en-US', 'utterance': 'complete something'};
+      var mockUtterance2 = {'lang': 'en-US', 'utterance': 'remove something'};
+
+      rootScope.$broadcast('adaptive.speech:utterance', mockUtterance1);
+      expect(calledCount).toEqual(1);
+
+      rootScope.$broadcast('adaptive.speech:utterance', mockUtterance2);
+      expect(calledCount).toEqual(2);
+    });
 
   });
 });
