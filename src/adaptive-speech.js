@@ -136,7 +136,6 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
 
   var listenUtterance = function(tasks){
     $rootScope.$on('adaptive.speech:utterance', function(e, data){
-
       var array = [];
       if (angular.isArray(tasks)) {
         array = tasks;
@@ -177,12 +176,20 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
       setLang(lang);
     },
 
+    getLang: function(){
+      return DEST_LANG;
+    },
+
     speak: function(text){
       speak(text);
     },
 
     payAttention: function(){
       payingAttention = true;
+    },
+
+    ignore: function(){
+      payingAttention = false;
     },
 
     listen: function(){

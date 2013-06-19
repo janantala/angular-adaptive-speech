@@ -1,21 +1,139 @@
 describe('adaptive.speech', function() {
 
-  var scope, $compile, $rootScope, $speechRecognition;
+  var rootscope;
 
   beforeEach(module('adaptive.speech'));
-  
+
+  beforeEach(inject(function($rootScope) {
+    rootScope = $rootScope;
+    spyOn(rootScope, "$on");
+    spyOn(rootScope, "$broadcast");
+  }));
+
   describe('default language', function() {
-    it('should provide a deafult language', inject(function(DEST_LANG) {
-      expect(DEST_LANG).toEqual('en-US');
+
+    var DEST_LANG;
+
+    beforeEach(inject(function (_DEST_LANG_) {
+      DEST_LANG= _DEST_LANG_;
     }));
+
+    it('should provide a deafult language', function() {
+      expect(DEST_LANG).toEqual('en-US');
+    });
   });
 
   describe('$speechRecognition service', function() {
 
-    it('should be defined', inject(function($speechRecognition) {
-      console.log($speechRecognition);
-      expect( $speechRecognition ).toBeDefined();
+    var $speechRecognition;
+
+    beforeEach(inject(function (_$speechRecognition_) {
+      $speechRecognition = _$speechRecognition_;
     }));
+
+    it('should be an object', function () {
+      expect(typeof $speechRecognition).toBe('object');
+    });
+
+    it('should have methods onstart(), onerror(), setLang(), getLang(), speak(), payAttention(), listen(), stopListening(), listenUtterance()', function () {
+      expect($speechRecognition.onstart).toBeDefined();
+      expect($speechRecognition.onerror).toBeDefined();
+      expect($speechRecognition.setLang).toBeDefined();
+      expect($speechRecognition.getLang).toBeDefined();
+      expect($speechRecognition.speak).toBeDefined();
+      expect($speechRecognition.payAttention).toBeDefined();
+      expect($speechRecognition.listen).toBeDefined();
+      expect($speechRecognition.stopListening).toBeDefined();
+      expect($speechRecognition.listenUtterance).toBeDefined();
+
+      expect(typeof $speechRecognition.onstart).toBe('function');
+      expect(typeof $speechRecognition.onerror).toBe('function');
+      expect(typeof $speechRecognition.setLang).toBe('function');
+      expect(typeof $speechRecognition.getLang).toBe('function');
+      expect(typeof $speechRecognition.speak).toBe('function');
+      expect(typeof $speechRecognition.payAttention).toBe('function');
+      expect(typeof $speechRecognition.listen).toBe('function');
+      expect(typeof $speechRecognition.stopListening).toBe('function');
+      expect(typeof $speechRecognition.listenUtterance).toBe('function');
+    });
+
+
+    describe('setLang(), getLang()', function() {
+      it('should change a language', function() {
+        $speechRecognition.setLang('sk-SK');
+        expect($speechRecognition.getLang()).toEqual('sk-SK');
+      });
+    });
+
+    describe('listenUtterance()', function() {
+
+      it('should have called rootScope.$on', function(){
+        $speechRecognition.listenUtterance();
+        expect(rootScope.$on).toHaveBeenCalled();
+      });
+
+      it('should have called rootScope.$broadcast', function(){
+        var mockUtterance = {'lang': 'en-US', 'utterance': 'do something'};
+        rootScope.$broadcast('adaptive.speech:utterance', mockUtterance);
+        expect(rootScope.$broadcast).toHaveBeenCalled();
+      });
+
+      /**
+       * rootscope.$on() is not called after rootscope.$broadcast()
+       */
+
+
+      // it('should call a function after recognition - object', function() {
+      //   var calledCount = 0;
+      //   var mockUtterance = {'lang': 'en-US', 'utterance': 'do something'};
+      //   var mockObject = {
+      //     'regex': /^do .+/gi,
+      //     'lang': 'en-US',
+      //     'call': function(utterance){
+      //       console.log(utterance);
+      //       calledCount += 1;
+      //     }
+      //   };
+
+      //   $speechRecognition.listenUtterance(mockObject);
+      //   expect(calledCount).toEqual(0);
+
+      //   rootScope.$broadcast('adaptive.speech:utterance', mockUtterance);
+      //   expect(calledCount).toEqual(1);
+      // });
+
+      // it('should call a function after recognition - array', function() {
+      //     var calledCount = 0;
+      //     var mockUtterance1 = {'lang': 'en-US', 'utterance': 'complete something'};
+      //     var mockUtterance2 = {'lang': 'en-US', 'utterance': 'clear'};
+      //     var mockArray = [{
+      //       'regex': /^complete .+/gi,
+      //       'lang': 'en-US',
+      //       'call': function(utterance){
+      //         console.log(utterance);
+      //         calledCount += 1;
+      //       }
+      //     },{
+      //       'regex': /clear.*/gi,
+      //       'lang': 'en-US',
+      //       'call': function(utterance){
+      //         console.log(utterance);
+      //         calledCount += 1;
+      //       }
+      //     }];
+
+      //     $speechRecognition.listenUtterance(mockArray);
+      //     expect(calledCount).toEqual(0);
+
+      //     rootScope.$broadcast('adaptive.speech:utterance', mockUtterance1);
+      //     expect(calledCount).toEqual(1);
+
+      //     rootScope.$broadcast('adaptive.speech:utterance', mockUtterance2);
+      //     expect(calledCount).toEqual(2);
+      // });
+
+    });
+
 
   });
 

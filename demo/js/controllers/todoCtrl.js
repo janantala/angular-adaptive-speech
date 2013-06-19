@@ -182,7 +182,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			}
 		},
 		'clear-completed': {
-			'regex': /clear/gi,
+			'regex': /clear.*/gi,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$scope.clearCompletedTodos();
