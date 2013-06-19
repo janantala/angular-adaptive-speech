@@ -1,6 +1,6 @@
 {
   "name": "angular-adaptive-speech",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "This module allows you to control web app using speech commands.",
   "author": "https://github.com/angular-adaptive/adaptive-speech/graphs/contributors",
   "license": "MIT",

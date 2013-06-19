@@ -3,7 +3,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
 
     // Default task.
-    grunt.registerTask('default', ['karma']);
+    grunt.registerTask('default', ['karma', 'jshint']);
 
     var karmaConfig = function(configFile, customOptions) {
         var options = { configFile: configFile, keepalive: true };
@@ -19,7 +19,7 @@ module.exports = function (grunt) {
             }
         },
         jshint:{
-            files:['src/**/*.js', 'test/**/*.js', 'demo/**/*.js'],
+            files:['src/**/*.js', 'test/**/*.js', 'demo/js/controllers/todoCtrl.js'],
             options: {
                 curly:true,
                 eqeqeq:true,
@@ -30,6 +30,7 @@ module.exports = function (grunt) {
                 sub:true,
                 boss:true,
                 eqnull:true,
+                devel:true,
                 globals:{}
             }
         }
