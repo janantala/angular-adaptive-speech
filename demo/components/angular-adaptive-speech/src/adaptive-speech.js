@@ -55,7 +55,9 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
   var justSpoke = false;
 
   var speak = function(text){
-    if (!text.length) return false;
+    if (!text) {
+      return false;
+    }
 
     var audioURL = ['http://www.corsproxy.com/', 'translate.google.com/translate_tts?ie=UTF-8&q=', text , '&tl=', DEST_LANG].join('');
     var audio = new Audio();
@@ -135,8 +137,7 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
   };
 
   var listenUtterance = function(tasks){
-    $rootScope.$on('adaptive.speech:utterance', function(e, data){
-
+    return $rootScope.$on('adaptive.speech:utterance', function(e, data){
       var array = [];
       if (angular.isArray(tasks)) {
         array = tasks;
@@ -177,12 +178,20 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
       setLang(lang);
     },
 
+    getLang: function(){
+      return DEST_LANG;
+    },
+
     speak: function(text){
       speak(text);
     },
 
     payAttention: function(){
       payingAttention = true;
+    },
+
+    ignore: function(){
+      payingAttention = false;
     },
 
     listen: function(){
@@ -193,8 +202,8 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
       stopListening();
     },
 
-    listenUtterance: function(command){
-      listenUtterance(command);
+    listenUtterance: function(tasks){
+      return listenUtterance(tasks);
     }
 
   };
@@ -216,7 +225,7 @@ adaptive.directive('speechrecognition', ['$rootScope', 'DEST_LANG', function ($r
           array = opts.tasks;
         }
         else {
-          array.push(tasks);
+          array.push(opts.tasks);
         }
 
         console.log(data);

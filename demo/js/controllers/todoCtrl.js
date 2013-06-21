@@ -216,14 +216,19 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 		}]
 	};
 
-	$speechRecognition.listenUtterance($scope.recognition['en-US']['addToList']);
-	$speechRecognition.listenUtterance($scope.recognition['en-US']['show-all']);
-	$speechRecognition.listenUtterance($scope.recognition['en-US']['show-active']);
-	$speechRecognition.listenUtterance($scope.recognition['en-US']['show-completed']);
-	$speechRecognition.listenUtterance($scope.recognition['en-US']['mark-all']);
-	$speechRecognition.listenUtterance($scope.recognition['en-US']['unmark-all']);
-	$speechRecognition.listenUtterance($scope.recognition['en-US']['clear-completed']);
+	var ignoreUtterance = {};
+	ignoreUtterance['addToList'] = $speechRecognition.listenUtterance($scope.recognition['en-US']['addToList']);
+	ignoreUtterance['show-all'] = $speechRecognition.listenUtterance($scope.recognition['en-US']['show-all']);
+	ignoreUtterance['show-active'] = $speechRecognition.listenUtterance($scope.recognition['en-US']['show-active']);
+	ignoreUtterance['show-completed'] = $speechRecognition.listenUtterance($scope.recognition['en-US']['show-completed']);
+	ignoreUtterance['mark-all'] = $speechRecognition.listenUtterance($scope.recognition['en-US']['mark-all']);
+	ignoreUtterance['unmark-all'] = $speechRecognition.listenUtterance($scope.recognition['en-US']['unmark-all']);
+	ignoreUtterance['clear-completed'] = $speechRecognition.listenUtterance($scope.recognition['en-US']['clear-completed']);
 
+	/*
+		to ignore listener call returned function
+	 */
+	// ignoreUtterance['addToList']();
 });
 
 }());
