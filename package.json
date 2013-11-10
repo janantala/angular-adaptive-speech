@@ -11,7 +11,8 @@
     "grunt": "~0.4.1",
     "grunt-karma": "*",
     "grunt-contrib-jshint": "~0.2.0",
-    "grunt-conventional-changelog": "~1.0.0"
+    "grunt-conventional-changelog": "~1.0.0",
+    "matchdep": "~0.3.0"
   },
   "scripts": {},
   "repository": {
