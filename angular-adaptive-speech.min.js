@@ -1,5 +1,5 @@
 /*!
- * angular-adaptive-speech v0.1.6
+ * angular-adaptive-speech v0.2.0
  * The MIT License
  * Copyright (c) 2013 Jan Antala
  */

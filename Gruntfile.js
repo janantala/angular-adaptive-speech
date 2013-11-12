@@ -14,6 +14,13 @@ module.exports = function (grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('bower.json'),
+    meta: {
+      banner: '/*!\n' +
+        ' * <%= pkg.name %> v<%= pkg.version %>\n' +
+        ' * The MIT License\n' +
+        ' * Copyright (c) 2013 Jan Antala\n' +
+        ' */'
+    },
     uglify: {
       options: {
         preserveComments: 'some'
@@ -25,7 +32,8 @@ module.exports = function (grunt) {
     },
     concat: {
       options: {
-        process: true
+        process: true,
+        banner: '<%= meta.banner %>\n\n'
       },
       dist: {
         src: 'src/<%= pkg.name %>.js',
@@ -33,7 +41,7 @@ module.exports = function (grunt) {
       }
     },
     karma: {
-        unit: {
+      unit: {
         options: karmaConfig('test/test.conf.js')
       }
     },

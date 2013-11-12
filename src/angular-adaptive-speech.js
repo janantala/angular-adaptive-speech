@@ -1,9 +1,3 @@
-/*!
- * angular-adaptive-speech v0.1.6
- * The MIT License
- * Copyright (c) 2013 Jan Antala
- */
-
 (function () {
 
 var adaptive = angular.module('adaptive.speech', []);
