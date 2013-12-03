@@ -1,9 +1,29 @@
 (function () {
 
+/**
+ * @ngdoc overview
+ * @name adaptive.speech
+ *
+ * @description
+ * `adaptive.speech` is an Angular module which provides you with speech recognition
+ * API's. Use its service to control your web app using speech commands. It's based
+ * on Chrome's speech recognition API.
+ */
 var adaptive = angular.module('adaptive.speech', []);
 
 adaptive.value('DEST_LANG', 'en-US');
 
+/**
+ * @ngdoc object
+ * @name adaptive.speech.$speechRecognition
+ * @requires $rootScope
+ * 
+ * @description
+ * The `$speechRecognition` service is your interface to communicate with underlying
+ * native speech recognition implementations by the browser. It provides several methods
+ * to for example paying attention and listening to what the user says, or it can
+ * react on specific callbacks.
+ */
 adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($rootScope, DEST_LANG) {
 
   var SpeechRecognitionMock = function(){
@@ -54,6 +74,17 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
   var isListening = false;
   var justSpoke = false;
 
+  /**
+   * @ngdoc function
+   * @name adaptive.speech.$speechRecognition#start
+   * @methodOf apdative.speech.$speechRecognition
+   *
+   * @description
+   * Let's your computer speak to you. Simply pass a string with a text
+   * you want your computer to say.
+   *
+   * @param {string} text Text
+   */
   var speak = function(text){
     if (!text) {
       return false;
@@ -86,6 +117,14 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
     return Math.floor(Math.random() * (to - from + 1) + from);
   };
 
+  /**
+   * @ngdoc function
+   * @name adaptive.speech.$speechRecognition#listen
+   * @methodOf adaptive.speech.$speechRecognition
+   *
+   * @description
+   * Starts the speech recognizer and listens for speech input.
+   */
   var listen = function(){
     if (!isListening) {
       init();
@@ -103,6 +142,17 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
     isListening = false;
   };
 
+  /**
+   * @ngdoc function
+   * @name adaptive.speech.$speechRecognition#setLang
+   * @methodOf adaptive.speech.$speechRecognition
+   *
+   * @description
+   * Configures speech recognizer to use given language when trying to recognize
+   * speech input. Default is `en-US`.
+   *
+   * @
+   */
   var setLang = function(lang){
     DEST_LANG = lang;
     recognizer.lang = lang;
@@ -136,6 +186,54 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
     }
   };
 
+  /**
+   * @ngdoc function
+   * @name adaptive.speech.$speechRecognition#listenUtterance
+   * @methodOf adaptive.speech.$speechRecognition
+   *
+   * @description
+   * With `$speechRecognition.listenUtterance()` you're able to setup several tasks 
+   * for the speech recognizer within your controller. `listenUtterance()` expects a 
+   * task description object, that holds defined tasks. A task needs an identifier, 
+   * a regex for the speech recognizer, as well as the language in which the speech 
+   * recognizer should interpret it.
+   *
+   * In addition one has to provide a function that will be called once the speech
+   * recognizer recognizes the given pattern.
+   *
+   * <pre>
+   * var app = angular.module('myApp', ['adaptive.speech']);
+   *
+   * app.controller('Ctrl', function ($speechRecognition) {
+   *  
+   *     $scope.recognition = {};
+   *     $scope.recognition['en-US'] = {
+   *       'addToList': {
+   *           'regex': /^to do .+/gi,
+   *           'lang': 'en-US',
+   *           'call': function(e){
+   *               $scope.addToList(e);
+   *           }
+   *       },
+   *       'listTasks': [{
+   *           'regex': /^complete .+/gi,
+   *           'lang': 'en-US',
+   *           'call': function(e){
+   *               $scope.completeTask(e);
+   *           }
+   *       },{
+   *           'regex': /^remove .+/gi,
+   *           'lang': 'en-US',
+   *           'call': function(e){
+   *               $scope.removeTask(e);
+   *           }
+   *       }]
+   *     };
+   * });
+   * </pre>
+   *
+   * @param {object} tasks Task definition object
+   */
   var listenUtterance = function(tasks){
     return $rootScope.$on('adaptive.speech:utterance', function(e, data){
       var array = [];
@@ -166,6 +264,27 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
 
 
   return {
+    /**
+     * @ngdoc function
+     * @name adaptive.speech.$speechRecognition#onstart
+     * @method adaptive.speech.$speechRecognition
+     *
+     * @description
+     * Exepts a function which gets executed once `$speechRecognition` service
+     * starts listening to speech input.
+     * 
+     * <pre>
+     * var app = angular.module('myApp', ['adaptive.speech']);
+     *
+     * app.controller('Ctrl', function ($speechRecognition) {
+     *   $speechRecognition.onstart(function () {
+     *      $speechrecognition.speak('Yes?, How can I help you?);
+     *   });
+     * });
+     * </pre>
+     *
+     * @param {object} onstartFn Function callback
+     */
     onstart: function(fn){
       onstart = fn;
     },
@@ -178,6 +297,16 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
       setLang(lang);
     },
 
+    /**
+     * @ngdoc function
+     * @name adaptive.speech.$speechRecognition#getLang
+     * @methodOf adaptive.speech.$speechRecognition
+     *
+     * @description
+     * Returns configured language that is used by speech recognizer.
+     *
+     * @return {string} lang Language key
+     */
     getLang: function(){
       return DEST_LANG;
     },
@@ -209,6 +338,19 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
   };
 }]);
 
+/**
+ * @ngdoc object
+ * @name adaptive.speech.directive:speechrecognition
+ * @requires $rootScope
+ * @restrict A
+ *
+ * @description
+ * `adaptive.speech` provides an alternative way to define tasks, the speech 
+ * recognizer should listen to, to the `$speechRecognition.listenUtterance()` method.
+ * All you have to do is to apply the `speechrecognition` directive to any element
+ * and declare a object literal expression just as you would when using
+ * `$speechRecognition.listenUtterance()`.
+ */
 adaptive.directive('speechrecognition', ['$rootScope', 'DEST_LANG', function ($rootScope, DEST_LANG) {
   return {
     restrict: 'A',
