@@ -69,7 +69,9 @@ Apply the directive to your elements where *thing* is keyword reference:
 
 ```html
 <ul>
-  <li speechrecognition="{'tasks': recognition['en-US']['listTasks'], 'thing': thing}">{{thing}}</li>
+    <li ng-repeat="thing in things" speechrecognition="{'tasks': recognition['en-US']['listTasks'], 'thing': thing}">
+        {{thing}}
+    </li>
 </ul>
 ```
 Or run recognition directly from controller:
