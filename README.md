@@ -22,9 +22,11 @@ We recomend you to read:
 
 We use [bower](http://twitter.github.com/bower/) for dependency management. Add
 
-    dependencies: {
-        "angular-adaptive-speech": "latest"
-    }
+```json
+dependencies: {
+    "angular-adaptive-speech": "latest"
+}
+```
 
 To your `bower.json` file. Then run
 
@@ -32,68 +34,81 @@ To your `bower.json` file. Then run
 
 This will copy the speech recognition files into your `bower_components` folder, along with its dependencies. Load the script files in your application:
 
-    <script type="text/javascript" src="bower_components/angular/angular.js"></script>
-    <script type="text/javascript" src="bower_components/angular-adaptive-speech/angular-adaptive-speech.min.js"></script>
+```html
+<script type="text/javascript" src="bower_components/angular/angular.js"></script>
+<script type="text/javascript" src="bower_components/angular-adaptive-speech/angular-adaptive-speech.min.js"></script>
+```
 
 Add the adaptive.speech module as a dependency to your application module:
 
-    var myAppModule = angular.module('MyApp', ['adaptive.speech']);
+```js
+var myAppModule = angular.module('MyApp', ['adaptive.speech']);
+```
 
 and include $speechRecognition service as a dependency to your controller:
 
-    angular.module('MyApp').controller('MainCtrl', function ['$scope', '$speechRecognition', ($scope, $speechRecognition) {
+```js
+angular.module('MyApp').controller('MainCtrl', function ['$scope', '$speechRecognition', ($scope, $speechRecognition) {
 
-    }]);
+}]);
+```
 
 To start speech recognition run from controller:
 
-    var LANG = 'en-US';
-    $speechRecognition.onstart(function(){
-      $speechRecognition.speak('Yes? How can I help you?');
-    });
-    $speechRecognition.payAttention();
-    $speechRecognition.setLang(LANG);
-    $speechRecognition.listen();
+```js
+var LANG = 'en-US';
+$speechRecognition.onstart(function(){
+  $speechRecognition.speak('Yes? How can I help you?');
+});
+$speechRecognition.payAttention();
+$speechRecognition.setLang(LANG);
+$speechRecognition.listen();
+```
 
-Apply the directive to your elements:
+Apply the directive to your elements where *thing* is keyword reference:
 
-    <ul>
-      <li speechrecognition="{'tasks': recognition['en-US']['listTasks'], 'thing': thing}>{{thing}}</li>
-    </ul>
-
+```html
+<ul>
+  <li speechrecognition="{'tasks': recognition['en-US']['listTasks'], 'thing': thing}">{{thing}}</li>
+</ul>
+```
 Or run recognition directly from controller:
 
-    $speechRecognition.listenUtterance($scope.recognition['en-US']['addToList']);
+```js
+$speechRecognition.listenUtterance($scope.recognition['en-US']['addToList']);
+```
 
 ## Options
 
 All the speechRecognition options can be set up in your controller.
 
-    myAppModule.controller('MyController', function($scope) {
-        $scope.recognition = {};
-        $scope.recognition['en-US'] = {
-            'addToList': {
-                'regex': /^to do .+/gi,
-                'lang': 'en-US',
-                'call': function(e){
-                    $scope.addToList(e);
-                }
-            },
-            'listTasks': [{
-                'regex': /^complete .+/gi,
-                'lang': 'en-US',
-                'call': function(e){
-                    $scope.completeTask(e);
-                }
-            },{
-                'regex': /^remove .+/gi,
-                'lang': 'en-US',
-                'call': function(e){
-                    $scope.removeTask(e);
-                }
-            }]
-        };
-    });
+```js
+myAppModule.controller('MyController', function($scope) {
+    $scope.recognition = {};
+    $scope.recognition['en-US'] = {
+        'addToList': {
+            'regex': /^to do .+/gi,
+            'lang': 'en-US',
+            'call': function(e){
+                $scope.addToList(e);
+            }
+        },
+        'listTasks': [{
+            'regex': /^complete .+/gi,
+            'lang': 'en-US',
+            'call': function(e){
+                $scope.completeTask(e);
+            }
+        },{
+            'regex': /^remove .+/gi,
+            'lang': 'en-US',
+            'call': function(e){
+                $scope.removeTask(e);
+            }
+        }]
+    };
+});
+```
 
 # Testing
 
