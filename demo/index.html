@@ -7,8 +7,8 @@
 		<link rel="stylesheet" href="bower_components/todomvc-common/base.css">
 		<style>[ng-cloak] { display: none; }</style>
 	</head>
-	<body>
-		<section id="todoapp" ng-controller="TodoCtrl">
+	<body ng-controller="TodoCtrl">
+		<section id="todoapp">
 			<header id="header">
 				<h1>todos</h1>
 				<form id="todo-form" ng-submit="addTodo()">
@@ -60,8 +60,17 @@
 			<p>clear completed tasks</p>
 			<p>complete TASK</p>
 			<p>remove TASK</p>
-			<h3>Credits:</h3>
-			<a href="http://twitter.com/janantala">Jan Antala</a>
+
+      <h2>Or submit utterance:</h2>
+      <div class="view" >
+        <form ng-submit="command(speechUtterance)">
+          <input class="edit" ng-model="speechUtterance">
+          <button type="submit" >Command</button>
+        </form>
+      </div>
+
+      <h3>Credits:</h3>
+			<a href="http://www.janantala.com">Jan Antala</a>
 			<h3>TODO MVC</h3>
 			<p>Credits:
 				<a href="http://twitter.com/cburgdorf">Christoph Burgdorf</a>,

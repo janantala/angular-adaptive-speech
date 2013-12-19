@@ -149,6 +149,11 @@ adaptive.provider('$speechRecognition', function () {
       isListening = false;
     };
 
+    var command = function(utterance){
+      console.log('utterance: "' + utterance + '"');
+      $rootScope.$emit('adaptive.speech:utterance', {'lang': DEST_LANG, 'utterance': utterance});
+    };
+
     /**
     * @ngdoc function
     * @name adaptive.speech.$speechRecognition#setLang
@@ -186,8 +191,7 @@ adaptive.provider('$speechRecognition', function () {
 
           if (payingAttention) {
             console.log(result);
-            console.log('utterance: "' + utterance + '"');
-            $rootScope.$emit('adaptive.speech:utterance', {'lang': DEST_LANG, 'utterance': utterance});
+            command(utterance);
           }
         }
       }
@@ -336,6 +340,10 @@ adaptive.provider('$speechRecognition', function () {
 
       stopListening: function(){
         stopListening();
+      },
+
+      command: function(utterance){
+        command(utterance);
       },
 
       listenUtterance: function(tasks){

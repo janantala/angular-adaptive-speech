@@ -30,6 +30,17 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 		$scope.allChecked = val;
 	});
 
+  $scope.safeApply = function(fn) {
+    var phase = this.$root.$$phase;
+    if (phase == '$apply' || phase == '$digest') {
+      if(fn && (typeof(fn) === 'function')) {
+        fn();
+      }
+    } else {
+      this.$apply(fn);
+    }
+  };
+
 	$scope.addTodo = function () {
 		var newTodo = $scope.newTodo.trim();
 		console.log(newTodo);
@@ -46,6 +57,11 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 		$scope.newTodo = '';
 		$scope.remainingCount++;
 	};
+
+  $scope.command = function(utterance) {
+    $speechRecognition.command(utterance);
+    $scope.speechUtterance = '';
+  };
 
 	$scope.editTodo = function (todo) {
 		$scope.editedTodo = todo;
@@ -110,7 +126,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			if (todos[i].title === title) {
 				todos[i].completed = ! todos[i].completed;
 				$scope.todoCompleted(todos[i]);
-				$scope.$apply();
+				$scope.safeAAaspply();
 				return true;
 			}
 		}
@@ -137,7 +153,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 				if (parts.length > 1) {
 					$scope.newTodo = parts.slice(1).join(' ');
 					$scope.addTodo();
-					$scope.$apply();
+					$scope.safeApply();
 				}
 			}
 		},
@@ -146,7 +162,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$location.path('/');
-				$scope.$apply();
+				$scope.safeApply();
 			}
 		},
 		'show-active': {
@@ -154,7 +170,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$location.path('/active');
-				$scope.$apply();
+				$scope.safeApply();
 			}
 		},
 		'show-completed': {
@@ -162,7 +178,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$location.path('/completed');
-				$scope.$apply();
+				$scope.safeApply();
 			}
 		},
 		'mark-all': {
@@ -170,7 +186,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$scope.markAll(1);
-				$scope.$apply();
+				$scope.safeApply();
 			}
 		},
 		'unmark-all': {
@@ -178,7 +194,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$scope.markAll(1);
-				$scope.$apply();
+				$scope.safeApply();
 			}
 		},
 		'clear-completed': {
@@ -186,7 +202,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			'lang': 'en-US',
 			'call': function(utterance){
 				$scope.clearCompletedTodos();
-				$scope.$apply();
+				$scope.safeApply();
 			}
 		},
 		'listTasks': [{
@@ -208,7 +224,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 					console.log(todo);
 					if (todo) {
 						$scope.removeTodo(todo);
-						$scope.$apply();
+						$scope.safeApply();
 					}
 				}
 			}
