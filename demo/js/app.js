@@ -7,4 +7,4 @@
  *
  * @type {angular.Module}
  */
-var todomvc = angular.module('todomvc', ['adaptive.speech']);
+var todomvc = angular.module('todomvc', ['ngRoute', 'adaptive.speech']);
