@@ -124,7 +124,6 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 		var error = (e.error || '');
 		alert('An error occurred ' + error);
 	});
-	$speechRecognition.payAttention();
 	// $speechRecognition.setLang(LANG);
 	$speechRecognition.listen();
 

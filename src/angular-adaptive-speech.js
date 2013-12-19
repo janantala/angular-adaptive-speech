@@ -70,7 +70,7 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
 
   init();
 
-  var payingAttention = false;
+  var payingAttention = true;
   var isListening = false;
   var justSpoke = false;
 
