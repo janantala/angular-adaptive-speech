@@ -14,13 +14,6 @@ describe('adaptive.speech', function() {
 
     var DEST_LANG;
 
-    beforeEach(inject(function (_DEST_LANG_) {
-      DEST_LANG= _DEST_LANG_;
-    }));
-
-    it('should provide a deafult language', function() {
-      expect(DEST_LANG).toEqual('en-US');
-    });
   });
 
   describe('$speechRecognition service', function() {

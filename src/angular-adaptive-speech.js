@@ -11,332 +11,340 @@
  */
 var adaptive = angular.module('adaptive.speech', []);
 
-adaptive.value('DEST_LANG', 'en-US');
-
 /**
  * @ngdoc object
- * @name adaptive.speech.$speechRecognition
- * @requires $rootScope
- * 
+ * @name adaptive.detection.$speechRecognitionProvider
+ *
  * @description
- * The `$speechRecognition` service is your interface to communicate with underlying
- * native speech recognition implementations by the browser. It provides several methods
- * to for example paying attention and listening to what the user says, or it can
- * react on specific callbacks.
+ * The `$speechRecognitionProvider` provides an interface to configure `$speechRecognition 
+ * service for runtime.
  */
-adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($rootScope, DEST_LANG) {
+adaptive.provider('$speechRecognition', function () {
 
-  var SpeechRecognitionMock = function(){
-    this.start = function() { this.onerror({'code': 0, 'error': 'speech recognition is not supported'}); }.bind(this);
-    this.stop = function() { this.onerror({'code': 0, 'error': 'speech recognition is not supported'}); }.bind(this);
-  };
+  this.DEST_LANG = 'en-US';
+  
+  /**
+  * @ngdoc object
+  * @name adaptive.speech.$speechRecognition
+  * @requires $rootScope
+  * 
+  * @description
+  * The `$speechRecognition` service is your interface to communicate with underlying
+  * native speech recognition implementations by the browser. It provides several methods
+  * to for example paying attention and listening to what the user says, or it can
+  * react on specific callbacks.
+  */ 
+  this.$get = ['$rootScope', function ($rootScope) {
+    
+    var DEST_LANG = this.DEST_LANG;
 
-  window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || SpeechRecognitionMock;
-
-  var recognizer;
-
-  var init = function(){
-    recognizer = new window.SpeechRecognition();
-    recognizer.continuous = true;
-    recognizer.interimResults = true;
-    recognizer.maxAlternatives = 3;
-
-    recognizer.onresult = function(e) {
-      if (onresult) {
-        onresult(e);
-      }
+    var SpeechRecognitionMock = function(){
+      this.start = function() { this.onerror({'code': 0, 'error': 'speech recognition is not supported'}); }.bind(this);
+      this.stop = function() { this.onerror({'code': 0, 'error': 'speech recognition is not supported'}); }.bind(this);
     };
 
-    recognizer.onstart = function(e) {
-      console.log('listening...');
-      if (onstart) {
-        onstart(e);
-      }
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || SpeechRecognitionMock;
+
+    var recognizer;
+
+    var init = function(){
+      recognizer = new window.SpeechRecognition();
+      recognizer.continuous = true;
+      recognizer.interimResults = true;
+      recognizer.maxAlternatives = 3;
+
+      recognizer.onresult = function(e) {
+        if (onresult) {
+          onresult(e);
+        }
+      };
+
+      recognizer.onstart = function(e) {
+        console.log('listening...');
+        if (onstart) {
+          onstart(e);
+        }
+      };
+
+      recognizer.onend = function(e) {
+        if (onend) {
+          onend(e);
+        }
+      };
+
+      recognizer.onerror = function(e) {
+        console.log(e);
+        if (onerror) {
+          onerror(e);
+        }
+      };
     };
 
-    recognizer.onend = function(e) {
-      if (onend) {
-        onend(e);
-      }
-    };
+    init();
 
-    recognizer.onerror = function(e) {
-      console.log(e);
-      if (onerror) {
-        onerror(e);
-      }
-    };
-  };
-
-  init();
-
-  var payingAttention = true;
-  var isListening = false;
-  var justSpoke = false;
-
-  /**
-   * @ngdoc function
-   * @name adaptive.speech.$speechRecognition#start
-   * @methodOf apdative.speech.$speechRecognition
-   *
-   * @description
-   * Let's your computer speak to you. Simply pass a string with a text
-   * you want your computer to say.
-   *
-   * @param {string} text Text
-   */
-  var speak = function(text){
-    if (!text) {
-      return false;
-    }
-
-    var audioURL = ['http://www.corsproxy.com/', 'translate.google.com/translate_tts?ie=UTF-8&q=', text , '&tl=', DEST_LANG].join('');
-    var audio = new Audio();
-
-    audio.addEventListener("play", function () {
-      console.log('isSpeaking start');
-    }, false);
-
-    audio.addEventListener("ended", function () {
-      justSpoke = true;
-      console.log('isSpeaking end');
-    }, false);
-
-    audio.addEventListener("error", function () {
-      console.log('error');
-      console.log('isSpeaking end');
-    }, false);
-
-    audio.autoplay = true;
-    audio.src = audioURL;
-
-
-  };
-
-  var random = function(from, to) {
-    return Math.floor(Math.random() * (to - from + 1) + from);
-  };
-
-  /**
-   * @ngdoc function
-   * @name adaptive.speech.$speechRecognition#listen
-   * @methodOf adaptive.speech.$speechRecognition
-   *
-   * @description
-   * Starts the speech recognizer and listens for speech input.
-   */
-  var listen = function(){
-    if (!isListening) {
-      init();
-      recognizer.start();
-      console.log(recognizer);
-    }
-    isListening = true;
-  };
-
-  var stopListening = function(){
-    if (isListening) {
-      recognizer.stop();
-      console.log(recognizer);
-    }
-    isListening = false;
-  };
-
-  /**
-   * @ngdoc function
-   * @name adaptive.speech.$speechRecognition#setLang
-   * @methodOf adaptive.speech.$speechRecognition
-   *
-   * @description
-   * Configures speech recognizer to use given language when trying to recognize
-   * speech input. Default is `en-US`.
-   *
-   * @
-   */
-  var setLang = function(lang){
-    DEST_LANG = lang;
-    recognizer.lang = lang;
-  };
-
-  var onstart, onerror;
-
-  var onend = function(e){
-    payingAttention = false;
-    recognizer = null;
-  };
-
-  var onresult = function(e){
-    if (e.results.length) {
-      var result = e.results[e.resultIndex];
-      if (result.isFinal) {
-
-        if (justSpoke) {
-          justSpoke = false;
-          return false;
-        }
-
-        var utterance = result[0].transcript.trim();
-
-        if (payingAttention) {
-          console.log(result);
-          console.log('utterance: "' + utterance + '"');
-          $rootScope.$emit('adaptive.speech:utterance', {'lang': DEST_LANG, 'utterance': utterance});
-        }
-      }
-    }
-  };
-
-  /**
-   * @ngdoc function
-   * @name adaptive.speech.$speechRecognition#listenUtterance
-   * @methodOf adaptive.speech.$speechRecognition
-   *
-   * @description
-   * With `$speechRecognition.listenUtterance()` you're able to setup several tasks 
-   * for the speech recognizer within your controller. `listenUtterance()` expects a 
-   * task description object, that holds defined tasks. A task needs an identifier, 
-   * a regex for the speech recognizer, as well as the language in which the speech 
-   * recognizer should interpret it.
-   *
-   * In addition one has to provide a function that will be called once the speech
-   * recognizer recognizes the given pattern.
-   *
-   * <pre>
-   * var app = angular.module('myApp', ['adaptive.speech']);
-   *
-   * app.controller('Ctrl', function ($speechRecognition) {
-   *  
-   *     $scope.recognition = {};
-   *     $scope.recognition['en-US'] = {
-   *       'addToList': {
-   *           'regex': /^to do .+/gi,
-   *           'lang': 'en-US',
-   *           'call': function(e){
-   *               $scope.addToList(e);
-   *           }
-   *       },
-   *       'listTasks': [{
-   *           'regex': /^complete .+/gi,
-   *           'lang': 'en-US',
-   *           'call': function(e){
-   *               $scope.completeTask(e);
-   *           }
-   *       },{
-   *           'regex': /^remove .+/gi,
-   *           'lang': 'en-US',
-   *           'call': function(e){
-   *               $scope.removeTask(e);
-   *           }
-   *       }]
-   *     };
-   * });
-   * </pre>
-   *
-   * @param {object} tasks Task definition object
-   */
-  var listenUtterance = function(tasks){
-    return $rootScope.$on('adaptive.speech:utterance', function(e, data){
-      var array = [];
-      if (angular.isArray(tasks)) {
-        array = tasks;
-      }
-      else {
-        array.push(tasks);
-      }
-
-      array.forEach(function(command){
-        console.log(data);
-        console.log(command);
-        if (command.lang !== DEST_LANG) {
-          return false;
-        }
-
-        var regex = command.regex || null;
-        var utterance = data.utterance;
-        console.log(regex, utterance.match(regex));
-
-        if (utterance.match(regex)) {
-          command.call(utterance);
-        }
-      });
-    });
-  };
-
-
-  return {
-    /**
-     * @ngdoc function
-     * @name adaptive.speech.$speechRecognition#onstart
-     * @method adaptive.speech.$speechRecognition
-     *
-     * @description
-     * Exepts a function which gets executed once `$speechRecognition` service
-     * starts listening to speech input.
-     * 
-     * <pre>
-     * var app = angular.module('myApp', ['adaptive.speech']);
-     *
-     * app.controller('Ctrl', function ($speechRecognition) {
-     *   $speechRecognition.onstart(function () {
-     *      $speechrecognition.speak('Yes?, How can I help you?);
-     *   });
-     * });
-     * </pre>
-     *
-     * @param {object} onstartFn Function callback
-     */
-    onstart: function(fn){
-      onstart = fn;
-    },
-
-    onerror: function(fn){
-      onerror = fn;
-    },
-
-    setLang: function(lang){
-      setLang(lang);
-    },
+    var payingAttention = true;
+    var isListening = false;
+    var justSpoke = false;
 
     /**
-     * @ngdoc function
-     * @name adaptive.speech.$speechRecognition#getLang
-     * @methodOf adaptive.speech.$speechRecognition
-     *
-     * @description
-     * Returns configured language that is used by speech recognizer.
-     *
-     * @return {string} lang Language key
-     */
-    getLang: function(){
-      return DEST_LANG;
-    },
+    * @ngdoc function
+    * @name adaptive.speech.$speechRecognition#start
+    * @methodOf apdative.speech.$speechRecognition
+    *
+    * @description
+    * Let's your computer speak to you. Simply pass a string with a text
+    * you want your computer to say.
+    *
+    * @param {string} text Text
+    */
+    var speak = function(text){
+      if (!text) {
+        return false;
+      }
 
-    speak: function(text){
-      speak(text);
-    },
+      var audioURL = ['http://www.corsproxy.com/', 'translate.google.com/translate_tts?ie=UTF-8&q=', text , '&tl=', DEST_LANG].join('');
+      var audio = new Audio();
 
-    payAttention: function(){
-      payingAttention = true;
-    },
+      audio.addEventListener("play", function () {
+      }, false);
 
-    ignore: function(){
+      audio.addEventListener("ended", function () {
+        justSpoke = true;
+      }, false);
+
+      audio.addEventListener("error", function () {
+      }, false);
+
+      audio.autoplay = true;
+      audio.src = audioURL;
+
+    };
+
+    var random = function(from, to) {
+      return Math.floor(Math.random() * (to - from + 1) + from);
+    };
+
+    /**
+    * @ngdoc function
+    * @name adaptive.speech.$speechRecognition#listen
+    * @methodOf adaptive.speech.$speechRecognition
+    *
+    * @description
+    * Starts the speech recognizer and listens for speech input.
+    */
+    var listen = function(){
+      if (!isListening) {
+        init();
+        recognizer.start();
+        console.log(recognizer);
+      }
+      isListening = true;
+    };
+
+    var stopListening = function(){
+      if (isListening) {
+        recognizer.stop();
+        console.log(recognizer);
+      }
+      isListening = false;
+    };
+
+    /**
+    * @ngdoc function
+    * @name adaptive.speech.$speechRecognition#setLang
+    * @methodOf adaptive.speech.$speechRecognition
+    *
+    * @description
+    * Configures speech recognizer to use given language when trying to recognize
+    * speech input. Default is `en-US`.
+    *
+    * @
+    */
+    var setLang = function(lang){
+      DEST_LANG = lang;
+      recognizer.lang = lang;
+    };
+
+    var onstart, onerror;
+
+    var onend = function(e){
       payingAttention = false;
-    },
+      recognizer = null;
+    };
 
-    listen: function(){
-      listen();
-    },
+    var onresult = function(e){
+      if (e.results.length) {
+        var result = e.results[e.resultIndex];
+        if (result.isFinal) {
 
-    stopListening: function(){
-      stopListening();
-    },
+          if (justSpoke) {
+            justSpoke = false;
+            return false;
+          }
 
-    listenUtterance: function(tasks){
-      return listenUtterance(tasks);
-    }
+          var utterance = result[0].transcript.trim();
 
-  };
-}]);
+          if (payingAttention) {
+            console.log(result);
+            console.log('utterance: "' + utterance + '"');
+            $rootScope.$emit('adaptive.speech:utterance', {'lang': DEST_LANG, 'utterance': utterance});
+          }
+        }
+      }
+    };
+
+    /**
+    * @ngdoc function
+    * @name adaptive.speech.$speechRecognition#listenUtterance
+    * @methodOf adaptive.speech.$speechRecognition
+    *
+    * @description
+    * With `$speechRecognition.listenUtterance()` you're able to setup several tasks 
+    * for the speech recognizer within your controller. `listenUtterance()` expects a 
+    * task description object, that holds defined tasks. A task needs an identifier, 
+    * a regex for the speech recognizer, as well as the language in which the speech 
+    * recognizer should interpret it.
+    *
+    * In addition one has to provide a function that will be called once the speech
+    * recognizer recognizes the given pattern.
+    *
+    * <pre>
+    * var app = angular.module('myApp', ['adaptive.speech']);
+    *
+    * app.controller('Ctrl', function ($speechRecognition) {
+    *  
+    *     $scope.recognition = {};
+    *     $scope.recognition['en-US'] = {
+    *       'addToList': {
+    *           'regex': /^to do .+/gi,
+    *           'lang': 'en-US',
+    *           'call': function(e){
+    *               $scope.addToList(e);
+    *           }
+    *       },
+    *       'listTasks': [{
+    *           'regex': /^complete .+/gi,
+    *           'lang': 'en-US',
+    *           'call': function(e){
+    *               $scope.completeTask(e);
+    *           }
+    *       },{
+    *           'regex': /^remove .+/gi,
+    *           'lang': 'en-US',
+    *           'call': function(e){
+    *               $scope.removeTask(e);
+    *           }
+    *       }]
+    *     };
+    * });
+    * </pre>
+    *
+    * @param {object} tasks Task definition object
+    */
+    var listenUtterance = function(tasks){
+      return $rootScope.$on('adaptive.speech:utterance', function(e, data){
+        var array = [];
+        if (angular.isArray(tasks)) {
+          array = tasks;
+        }
+        else {
+          array.push(tasks);
+        }
+
+        array.forEach(function(command){
+          console.log(data);
+          console.log(command);
+          if (command.lang !== DEST_LANG) {
+            return false;
+          }
+
+          var regex = command.regex || null;
+          var utterance = data.utterance;
+          console.log(regex, utterance.match(regex));
+
+          if (utterance.match(regex)) {
+            command.call(utterance);
+          }
+        });
+      });
+    };
+
+
+    return {
+      /**
+      * @ngdoc function
+      * @name adaptive.speech.$speechRecognition#onstart
+      * @method adaptive.speech.$speechRecognition
+      *
+      * @description
+      * Exepts a function which gets executed once `$speechRecognition` service
+      * starts listening to speech input.
+      * 
+      * <pre>
+      * var app = angular.module('myApp', ['adaptive.speech']);
+      *
+      * app.controller('Ctrl', function ($speechRecognition) {
+      *   $speechRecognition.onstart(function () {
+      *      $speechrecognition.speak('Yes?, How can I help you?);
+      *   });
+      * });
+      * </pre>
+      *
+      * @param {object} onstartFn Function callback
+      */
+      onstart: function(fn){
+        onstart = fn;
+      },
+
+      onerror: function(fn){
+        onerror = fn;
+      },
+
+      setLang: function(lang){
+        setLang(lang);
+      },
+
+      /**
+      * @ngdoc function
+      * @name adaptive.speech.$speechRecognition#getLang
+      * @methodOf adaptive.speech.$speechRecognition
+      *
+      * @description
+      * Returns configured language that is used by speech recognizer.
+      *
+      * @return {string} lang Language key
+      */
+      getLang: function(){
+        return DEST_LANG;
+      },
+
+      speak: function(text){
+        speak(text);
+      },
+
+      payAttention: function(){
+        payingAttention = true;
+      },
+
+      ignore: function(){
+        payingAttention = false;
+      },
+
+      listen: function(){
+        listen();
+      },
+
+      stopListening: function(){
+        stopListening();
+      },
+
+      listenUtterance: function(tasks){
+        return listenUtterance(tasks);
+      }
+
+    };  
+  }];  
+});
 
 /**
  * @ngdoc object
@@ -351,7 +359,7 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
  * and declare a object literal expression just as you would when using
  * `$speechRecognition.listenUtterance()`.
  */
-adaptive.directive('speechrecognition', ['$rootScope', 'DEST_LANG', function ($rootScope, DEST_LANG) {
+adaptive.directive('speechrecognition', ['$rootScope', '$speechRecognition', function ($rootScope, $speechRecognition) {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
@@ -361,6 +369,8 @@ adaptive.directive('speechrecognition', ['$rootScope', 'DEST_LANG', function ($r
       var opts = getOptions();
       console.log(opts);
       var unbind = $rootScope.$on('adaptive.speech:utterance', function(e, data){
+
+        var DEST_LANG = $speechRecognition.getLang();
 
         var array = [];
         if (angular.isArray(opts.tasks)) {
