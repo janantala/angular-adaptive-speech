@@ -180,7 +180,7 @@ adaptive.factory('$speechRecognition', ['$rootScope', 'DEST_LANG', function ($ro
         if (payingAttention) {
           console.log(result);
           console.log('utterance: "' + utterance + '"');
-          $rootScope.$broadcast('adaptive.speech:utterance', {'lang': DEST_LANG, 'utterance': utterance});
+          $rootScope.$emit('adaptive.speech:utterance', {'lang': DEST_LANG, 'utterance': utterance});
         }
       }
     }
@@ -360,7 +360,7 @@ adaptive.directive('speechrecognition', ['$rootScope', 'DEST_LANG', function ($r
       };
       var opts = getOptions();
       console.log(opts);
-      $rootScope.$on('adaptive.speech:utterance', function(e, data){
+      var unbind = $rootScope.$on('adaptive.speech:utterance', function(e, data){
 
         var array = [];
         if (angular.isArray(opts.tasks)) {
@@ -385,6 +385,9 @@ adaptive.directive('speechrecognition', ['$rootScope', 'DEST_LANG', function ($r
           }
         });
       });
+
+      scope.$on('destroy', unbind);
+
     }
   };
 }]);
