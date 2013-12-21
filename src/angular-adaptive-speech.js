@@ -23,6 +23,11 @@ adaptive.provider('$speechRecognition', function () {
 
   this.DEST_LANG = 'en-US';
   
+  this.setLang = function(lang){
+    this.DEST_LANG = lang;
+  };
+
+ 
   /**
   * @ngdoc object
   * @name adaptive.speech.$speechRecognition
