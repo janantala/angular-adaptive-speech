@@ -402,8 +402,8 @@ adaptive.directive('speechrecognition', ['$rootScope', '$speechRecognition', fun
           var regex = command.regex || null;
           var utterance = data.utterance;
 
-          if (utterance.match(regex) && utterance.match(new RegExp(opts.thing, 'ig'))) {
-            console.log(regex, utterance.match(regex), utterance.match(new RegExp(opts.thing, 'ig')));
+          if (utterance.match(regex) && utterance.match(new RegExp(opts.reference, 'ig'))) {
+            console.log(regex, utterance.match(regex), utterance.match(new RegExp(opts.reference, 'ig')));
             command.call(utterance);
           }
         });
