@@ -152,7 +152,7 @@ describe('adaptive.speech', function() {
     beforeEach(inject(function($rootScope, $compile) {
       elm = angular.element(
         '<li ng-class="{completed: todo.completed, editing: todo == editedTodo}">' +
-          '<div class="view" speechrecognition="{\'tasks\': mockObject, \'thing\': todo.title}">' +
+          '<div class="view" speechrecognition="{\'tasks\': mockObject, \'reference\': todo.title}">' +
             '<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="todoCompleted(todo)">' +
             '<label ng-dblclick="editTodo(todo)">{{todo.title}}</label>' +
             '<button class="destroy" ng-click="removeTodo(todo)"></button>' +
@@ -203,7 +203,7 @@ describe('adaptive.speech', function() {
     beforeEach(inject(function($rootScope, $compile) {
       elm = angular.element(
         '<li ng-class="{completed: todo.completed, editing: todo == editedTodo}">' +
-          '<div class="view" speechrecognition="{\'tasks\': mockArray, \'thing\': todo.title}">' +
+          '<div class="view" speechrecognition="{\'tasks\': mockArray, \'reference\': todo.title}">' +
             '<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="todoCompleted(todo)">' +
             '<label ng-dblclick="editTodo(todo)">{{todo.title}}</label>' +
             '<button class="destroy" ng-click="removeTodo(todo)"></button>' +
