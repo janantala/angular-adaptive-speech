@@ -11,6 +11,27 @@
  */
 var adaptive = angular.module('adaptive.speech', []);
 
+var callCommands = function(commands, DEST_LANG, utterance, reference){
+
+  commands.forEach(function(command){
+    if (command.lang !== DEST_LANG) {
+      return false;
+    }
+
+    var regex = command.regex || null;
+
+    if (utterance.match(regex)) {
+      if (!reference) {
+        command.call(utterance);
+      }
+      else if (reference && utterance.match(new RegExp(reference, 'ig'))) {
+        console.log(regex, utterance.match(regex), utterance.match(new RegExp(reference, 'ig')));
+        command.call(utterance);
+      }
+    }
+  });
+};
+
 /**
  * @ngdoc object
  * @name adaptive.detection.$speechRecognitionProvider
@@ -252,29 +273,16 @@ adaptive.provider('$speechRecognition', function () {
     */
     var listenUtterance = function(tasks){
       return $rootScope.$on('adaptive.speech:utterance', function(e, data){
-        var array = [];
+        var utterance = data.utterance;
+        var commands = [];
         if (angular.isArray(tasks)) {
-          array = tasks;
+          commands = tasks;
         }
         else {
-          array.push(tasks);
+          commands.push(tasks);
         }
 
-        array.forEach(function(command){
-          console.log(data);
-          console.log(command);
-          if (command.lang !== DEST_LANG) {
-            return false;
-          }
-
-          var regex = command.regex || null;
-          var utterance = data.utterance;
-          console.log(regex, utterance.match(regex));
-
-          if (utterance.match(regex)) {
-            command.call(utterance);
-          }
-        });
+        callCommands(commands, DEST_LANG, utterance);
       });
     };
 
@@ -384,29 +392,16 @@ adaptive.directive('speechrecognition', ['$rootScope', '$speechRecognition', fun
       var unbind = $rootScope.$on('adaptive.speech:utterance', function(e, data){
 
         var DEST_LANG = $speechRecognition.getLang();
-
-        var array = [];
+        var utterance = data.utterance;
+        var commands = [];
         if (angular.isArray(opts.tasks)) {
-          array = opts.tasks;
+          commands = opts.tasks;
         }
         else {
-          array.push(opts.tasks);
+          commands.push(opts.tasks);
         }
 
-        console.log(data);
-        array.forEach(function(command){
-          if (command.lang !== DEST_LANG) {
-            return false;
-          }
-
-          var regex = command.regex || null;
-          var utterance = data.utterance;
-
-          if (utterance.match(regex) && utterance.match(new RegExp(opts.reference, 'ig'))) {
-            console.log(regex, utterance.match(regex), utterance.match(new RegExp(opts.reference, 'ig')));
-            command.call(utterance);
-          }
-        });
+        callCommands(commands, DEST_LANG, utterance, opts.reference);
       });
 
       scope.$on('destroy', unbind);
