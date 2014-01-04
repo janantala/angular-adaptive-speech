@@ -11,7 +11,14 @@
  */
 var adaptive = angular.module('adaptive.speech', []);
 
-var callCommands = function(commands, DEST_LANG, utterance, reference){
+var callCommands = function(tasks, DEST_LANG, utterance, reference){
+  var commands = [];
+  if (angular.isArray(tasks)) {
+    commands = tasks;
+  }
+  else {
+    commands.push(tasks);
+  }
 
   commands.forEach(function(command){
     if (command.lang !== DEST_LANG) {
@@ -274,15 +281,7 @@ adaptive.provider('$speechRecognition', function () {
     var listenUtterance = function(tasks){
       return $rootScope.$on('adaptive.speech:utterance', function(e, data){
         var utterance = data.utterance;
-        var commands = [];
-        if (angular.isArray(tasks)) {
-          commands = tasks;
-        }
-        else {
-          commands.push(tasks);
-        }
-
-        callCommands(commands, DEST_LANG, utterance);
+        callCommands(tasks, DEST_LANG, utterance);
       });
     };
 
@@ -392,16 +391,8 @@ adaptive.directive('speechrecognition', ['$rootScope', '$speechRecognition', fun
       var unbind = $rootScope.$on('adaptive.speech:utterance', function(e, data){
 
         var DEST_LANG = $speechRecognition.getLang();
-        var utterance = data.utterance;
-        var commands = [];
-        if (angular.isArray(opts.tasks)) {
-          commands = opts.tasks;
-        }
-        else {
-          commands.push(opts.tasks);
-        }
-
-        callCommands(commands, DEST_LANG, utterance, opts.reference);
+        var utterance = data.utterance;        
+        callCommands(opts.tasks, DEST_LANG, utterance, opts.reference);
       });
 
       scope.$on('destroy', unbind);
