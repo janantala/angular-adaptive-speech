@@ -316,6 +316,14 @@ adaptive.provider('$speechRecognition', function () {
         onerror = fn;
       },
 
+      onUtterance: function(cb){
+        var unbind = $rootScope.$on('adaptive.speech:utterance', function(e, data){
+          cb(data.utterance);
+        });
+
+        $rootScope.$on('destroy', unbind);
+      },
+
       setLang: function(lang){
         setLang(lang);
       },
