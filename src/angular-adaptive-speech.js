@@ -1,15 +1,4 @@
-(function () {
-
-/**
- * @ngdoc overview
- * @name adaptive.speech
- *
- * @description
- * `adaptive.speech` is an Angular module which provides you with speech recognition
- * API's. Use its service to control your web app using speech commands. It's based
- * on Chrome's speech recognition API.
- */
-var adaptive = angular.module('adaptive.speech', []);
+(function() {
 
 var callCommands = function(tasks, DEST_LANG, utterance, reference){
   var commands = [];
@@ -40,14 +29,84 @@ var callCommands = function(tasks, DEST_LANG, utterance, reference){
 };
 
 /**
+ * @ngdoc overview
+ * @name adaptive.speech
+ *
+ * @description
+ * `adaptive.speech` is an Angular module which provides you with speech recognition
+ * API's. Use its service to control your web app using speech commands. It's based
+ * on Chrome's speech recognition API.
+ */
+var adaptive = angular.module('adaptive.speech', []);
+
+adaptive.provider('$speechSynthetis', function() {
+
+  this.corsProxyServer = 'http://www.corsproxy.com/';
+
+  this.$get = [function() {
+
+    var corsProxyServer = this.corsProxyServer;
+    var justSpoke = false;
+
+    /**
+    * @ngdoc function
+    * @name adaptive.speech.$speechSynthetis#speak
+    * @methodOf apdative.speech.$speechSynthetis
+    *
+    * @description
+    * Let's your computer speak to you. Simply pass a string with a text
+    * you want your computer to say.
+    *
+    * @param {string} text Text
+    * @param {string} lang Language
+    */
+    var speak = function(text, lang){
+      if (!text) {
+        return false;
+      }
+
+      var audioURL = [corsProxyServer, 'translate.google.com/translate_tts?ie=UTF-8&q=', text , '&tl=', lang].join('');
+      var audio = new Audio();
+
+      audio.addEventListener('play', function() {
+      }, false);
+
+      audio.addEventListener('ended', function() {
+        justSpoke = true;
+      }, false);
+
+      audio.addEventListener('error', function() {
+      }, false);
+
+      audio.autoplay = true;
+      audio.src = audioURL;
+    };
+
+    return {
+      speak: function(text, lang){
+        speak(text, lang);
+      },
+
+      justSpoke: function(){
+        return justSpoke;
+      },
+
+      recognised: function(){
+        justSpoke = false;
+      }
+    };
+  }];
+});
+
+/**
  * @ngdoc object
- * @name adaptive.detection.$speechRecognitionProvider
+ * @name adaptive.speech.$speechRecognitionProvider
  *
  * @description
  * The `$speechRecognitionProvider` provides an interface to configure `$speechRecognition 
  * service for runtime.
  */
-adaptive.provider('$speechRecognition', function () {
+adaptive.provider('$speechRecognition', function() {
 
   this.DEST_LANG = 'en-US';
   
@@ -55,7 +114,6 @@ adaptive.provider('$speechRecognition', function () {
     this.DEST_LANG = lang;
   };
 
- 
   /**
   * @ngdoc object
   * @name adaptive.speech.$speechRecognition
@@ -66,8 +124,11 @@ adaptive.provider('$speechRecognition', function () {
   * native speech recognition implementations by the browser. It provides several methods
   * to for example paying attention and listening to what the user says, or it can
   * react on specific callbacks.
-  */ 
-  this.$get = ['$rootScope', function ($rootScope) {
+  */
+ 
+  // TODO fix dependencies causing Unknown Provider and Circular Dependency errors
+  this.$get = function($rootScope, $speechSynthetis) {
+  // this.$get = ['$rootScope, $speechSynthetis', function($rootScope, $speechSynthetis) {
     
     var DEST_LANG = this.DEST_LANG;
 
@@ -117,45 +178,6 @@ adaptive.provider('$speechRecognition', function () {
 
     var payingAttention = true;
     var isListening = false;
-    var justSpoke = false;
-
-    /**
-    * @ngdoc function
-    * @name adaptive.speech.$speechRecognition#start
-    * @methodOf apdative.speech.$speechRecognition
-    *
-    * @description
-    * Let's your computer speak to you. Simply pass a string with a text
-    * you want your computer to say.
-    *
-    * @param {string} text Text
-    */
-    var speak = function(text){
-      if (!text) {
-        return false;
-      }
-
-      var audioURL = ['http://www.corsproxy.com/', 'translate.google.com/translate_tts?ie=UTF-8&q=', text , '&tl=', DEST_LANG].join('');
-      var audio = new Audio();
-
-      audio.addEventListener("play", function () {
-      }, false);
-
-      audio.addEventListener("ended", function () {
-        justSpoke = true;
-      }, false);
-
-      audio.addEventListener("error", function () {
-      }, false);
-
-      audio.autoplay = true;
-      audio.src = audioURL;
-
-    };
-
-    var random = function(from, to) {
-      return Math.floor(Math.random() * (to - from + 1) + from);
-    };
 
     /**
     * @ngdoc function
@@ -215,8 +237,8 @@ adaptive.provider('$speechRecognition', function () {
         var result = e.results[e.resultIndex];
         if (result.isFinal) {
 
-          if (justSpoke) {
-            justSpoke = false;
+          if ($speechSynthetis.justSpoke()) {
+            $speechSynthetis.recognised();
             return false;
           }
 
@@ -300,8 +322,8 @@ adaptive.provider('$speechRecognition', function () {
       * var app = angular.module('myApp', ['adaptive.speech']);
       *
       * app.controller('Ctrl', function ($speechRecognition) {
-      *   $speechRecognition.onstart(function () {
-      *      $speechrecognition.speak('Yes?, How can I help you?);
+      *   $speechRecognition.onstart(function() {
+      *      $speechSynthetis.speak('Yes?, How can I help you?);
       *   });
       * });
       * </pre>
@@ -342,10 +364,6 @@ adaptive.provider('$speechRecognition', function () {
         return DEST_LANG;
       },
 
-      speak: function(text){
-        speak(text);
-      },
-
       payAttention: function(){
         payingAttention = true;
       },
@@ -370,8 +388,9 @@ adaptive.provider('$speechRecognition', function () {
         return listenUtterance(tasks);
       }
 
-    };  
-  }];  
+    };
+  };
+  // }];
 });
 
 /**
@@ -391,7 +410,7 @@ adaptive.directive('speechrecognition', ['$rootScope', '$speechRecognition', fun
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
-      var getOptions = function () {
+      var getOptions = function() {
         return angular.extend({}, scope.$eval(attrs.speechrecognition));
       };
       var opts = getOptions();
@@ -399,7 +418,7 @@ adaptive.directive('speechrecognition', ['$rootScope', '$speechRecognition', fun
       var unbind = $rootScope.$on('adaptive.speech:utterance', function(e, data){
 
         var DEST_LANG = $speechRecognition.getLang();
-        var utterance = data.utterance;        
+        var utterance = data.utterance;
         callCommands(opts.tasks, DEST_LANG, utterance, opts.reference);
       });
 

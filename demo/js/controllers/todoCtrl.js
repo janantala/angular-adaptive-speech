@@ -7,7 +7,7 @@
  * - retrieves and persists the model via the todoStorage service
  * - exposes the model to the template and provides event handlers
  */
-todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage, filterFilter, $speechRecognition) {
+todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage, filterFilter, $speechSynthetis, $speechRecognition) {
 	var todos = $scope.todos = todoStorage.get();
 
 	$scope.newTodo = '';
@@ -126,15 +126,14 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			if (todos[i].title === title) {
 				todos[i].completed = ! todos[i].completed;
 				$scope.todoCompleted(todos[i]);
-				$scope.safeAAaspply();
+				$scope.safeApply();
 				return true;
 			}
 		}
 	};
-
 	var LANG = 'en-US';
 	$speechRecognition.onstart(function(e){
-		$speechRecognition.speak('Yes? How can I help you?');
+		$speechSynthetis.speak('Yes? How can I help you?', 'en-US');
 	});
 	$speechRecognition.onerror(function(e){
 		var error = (e.error || '');
