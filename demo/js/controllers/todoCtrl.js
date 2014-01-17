@@ -7,9 +7,14 @@
  * - retrieves and persists the model via the todoStorage service
  * - exposes the model to the template and provides event handlers
  */
-todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage, filterFilter, $speechSynthetis, $speechRecognition) {
+// todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage, filterFilter, $A, $B) {
+todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage, filterFilter, $speechSynthetis, $speechRecognition, $A, $B) {
 	var todos = $scope.todos = todoStorage.get();
-
+console.log($B.b(1));
+console.log($A.a());
+$A.setA(10);
+console.log($B.b(1));
+console.log($A.a());
 	$scope.newTodo = '';
 	$scope.remainingCount = filterFilter(todos, {completed: false}).length;
 	$scope.editedTodo = null;

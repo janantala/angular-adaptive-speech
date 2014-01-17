@@ -106,6 +106,7 @@ adaptive.provider('$speechSynthetis', function() {
  * The `$speechRecognitionProvider` provides an interface to configure `$speechRecognition 
  * service for runtime.
  */
+
 adaptive.provider('$speechRecognition', function() {
 
   this.DEST_LANG = 'en-US';
@@ -113,7 +114,7 @@ adaptive.provider('$speechRecognition', function() {
   this.setLang = function(lang){
     this.DEST_LANG = lang;
   };
-
+  
   /**
   * @ngdoc object
   * @name adaptive.speech.$speechRecognition
@@ -125,11 +126,8 @@ adaptive.provider('$speechRecognition', function() {
   * to for example paying attention and listening to what the user says, or it can
   * react on specific callbacks.
   */
- 
-  // TODO fix dependencies causing Unknown Provider and Circular Dependency errors
-  this.$get = function($rootScope, $speechSynthetis) {
-  // this.$get = ['$rootScope, $speechSynthetis', function($rootScope, $speechSynthetis) {
-    
+  this.$get = ['$rootScope', '$speechSynthetis', function($rootScope, $speechSynthetis) {
+
     var DEST_LANG = this.DEST_LANG;
 
     var SpeechRecognitionMock = function(){
@@ -307,7 +305,6 @@ adaptive.provider('$speechRecognition', function() {
       });
     };
 
-
     return {
       /**
       * @ngdoc function
@@ -321,7 +318,7 @@ adaptive.provider('$speechRecognition', function() {
       * <pre>
       * var app = angular.module('myApp', ['adaptive.speech']);
       *
-      * app.controller('Ctrl', function ($speechRecognition) {
+      * app.controller('Ctrl', function ($speechRecognition, $speechSynthetis) {
       *   $speechRecognition.onstart(function() {
       *      $speechSynthetis.speak('Yes?, How can I help you?);
       *   });
@@ -387,10 +384,8 @@ adaptive.provider('$speechRecognition', function() {
       listenUtterance: function(tasks){
         return listenUtterance(tasks);
       }
-
     };
-  };
-  // }];
+  }];
 });
 
 /**
@@ -427,6 +422,5 @@ adaptive.directive('speechrecognition', ['$rootScope', '$speechRecognition', fun
     }
   };
 }]);
-
 
 })();
