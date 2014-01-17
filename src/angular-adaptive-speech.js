@@ -1,7 +1,9 @@
 (function() {
 
 var callCommands = function(tasks, DEST_LANG, utterance, reference){
+  reference = reference || '.+';
   var commands = [];
+  
   if (angular.isArray(tasks)) {
     commands = tasks;
   }
@@ -17,10 +19,7 @@ var callCommands = function(tasks, DEST_LANG, utterance, reference){
     var regex = command.regex || null;
 
     if (utterance.match(regex)) {
-      if (!reference) {
-        command.call(utterance);
-      }
-      else if (reference && utterance.match(new RegExp(reference, 'ig'))) {
+      if (utterance.match(new RegExp(reference, 'ig'))) {
         console.log(regex, utterance.match(regex), utterance.match(new RegExp(reference, 'ig')));
         command.call(utterance);
       }
