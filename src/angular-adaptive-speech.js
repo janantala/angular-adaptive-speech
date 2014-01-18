@@ -3,7 +3,7 @@
 var callCommands = function(tasks, DEST_LANG, utterance, reference){
   reference = reference || '.+';
   var commands = [];
-  
+
   if (angular.isArray(tasks)) {
     commands = tasks;
   }
@@ -41,7 +41,7 @@ adaptive.provider('$speechSynthetis', function() {
 
   this.corsProxyServer = 'http://www.corsproxy.com/';
 
-  this.$get = [function() {
+  this.$get = function() {
 
     var corsProxyServer = this.corsProxyServer;
     var justSpoke = false;
@@ -93,7 +93,7 @@ adaptive.provider('$speechSynthetis', function() {
         justSpoke = false;
       }
     };
-  }];
+  };
 });
 
 /**
