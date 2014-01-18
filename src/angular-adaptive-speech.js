@@ -20,7 +20,6 @@ var callCommands = function(tasks, DEST_LANG, utterance, reference){
 
     if (utterance.match(regex)) {
       if (utterance.match(new RegExp(reference, 'ig'))) {
-        console.log(regex, utterance.match(regex), utterance.match(new RegExp(reference, 'ig')));
         command.call(utterance);
       }
     }
@@ -151,7 +150,6 @@ adaptive.provider('$speechRecognition', function() {
       };
 
       recognizer.onstart = function(e) {
-        console.log('listening...');
         if (onstart) {
           onstart(e);
         }
@@ -164,7 +162,6 @@ adaptive.provider('$speechRecognition', function() {
       };
 
       recognizer.onerror = function(e) {
-        console.log(e);
         if (onerror) {
           onerror(e);
         }
@@ -188,7 +185,6 @@ adaptive.provider('$speechRecognition', function() {
       if (!isListening) {
         init();
         recognizer.start();
-        console.log(recognizer);
       }
       isListening = true;
     };
@@ -196,13 +192,11 @@ adaptive.provider('$speechRecognition', function() {
     var stopListening = function(){
       if (isListening) {
         recognizer.stop();
-        console.log(recognizer);
       }
       isListening = false;
     };
 
     var command = function(utterance){
-      console.log('utterance: "' + utterance + '"');
       $rootScope.$emit('adaptive.speech:utterance', {'lang': DEST_LANG, 'utterance': utterance});
     };
 
@@ -242,7 +236,6 @@ adaptive.provider('$speechRecognition', function() {
           var utterance = result[0].transcript.trim();
 
           if (payingAttention) {
-            console.log(result);
             command(utterance);
           }
         }
@@ -408,7 +401,6 @@ adaptive.directive('speechrecognition', ['$rootScope', '$speechRecognition', fun
         return angular.extend({}, scope.$eval(attrs.speechrecognition));
       };
       var opts = getOptions();
-      console.log(opts);
       var unbind = $rootScope.$on('adaptive.speech:utterance', function(e, data){
 
         var DEST_LANG = $speechRecognition.getLang();
