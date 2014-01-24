@@ -408,7 +408,9 @@ adaptive.directive('speechrecognition', ['$rootScope', '$speechRecognition', fun
         callCommands(opts.tasks, DEST_LANG, utterance, opts.reference);
       });
 
-      scope.$on('destroy', unbind);
+      element.bind('$destroy', function() {
+        unbind();
+      });
 
     }
   };
