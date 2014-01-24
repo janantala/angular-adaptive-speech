@@ -133,8 +133,15 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
   };
 
   $scope.correctUtterance = function(utterance) {
+    
+    if (!$scope.lastUtterance || utterance) {
+      return false;
+    }
+
     // TODO correctUtterance 
-    $scope.lastUtterance = '';
+    
+    $scope.command(utterance);
+    $scope.newUtterance = '';
   };
 
   var LANG = 'en-US';
@@ -149,7 +156,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
   $speechRecognition.listen();
 
   $speechRecognition.onUtterance(function(utterance){
-    $scope.lastUtterance = utterance;
+    $scope.newUtterance = $scope.lastUtterance = utterance;
   });
 
   $scope.recognition = {};
