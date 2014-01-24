@@ -58,11 +58,6 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 		$scope.remainingCount++;
 	};
 
-  $scope.command = function(utterance) {
-    $speechRecognition.command(utterance);
-    $scope.speechUtterance = '';
-  };
-
 	$scope.editTodo = function (todo) {
 		$scope.editedTodo = todo;
 	};
@@ -131,6 +126,17 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 			}
 		}
 	};
+
+  $scope.command = function(utterance) {
+    $speechRecognition.command(utterance);
+    $scope.speechUtterance = '';
+  };
+
+  $scope.correctUtterance = function(utterance) {
+  	// TODO correctUtterance 
+    $scope.lastUtterance = '';
+  };
+
 	var LANG = 'en-US';
 	$speechRecognition.onstart(function(e){
 		$speechSynthetis.speak('Yes? How can I help you?', 'en-US');
@@ -141,6 +147,10 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
 	});
 	// $speechRecognition.setLang(LANG);
 	$speechRecognition.listen();
+
+	$speechRecognition.onUtterance(function(utterance){
+		$scope.lastUtterance = utterance;
+	});
 
 	$scope.recognition = {};
 	$scope.recognition['en-US'] = {

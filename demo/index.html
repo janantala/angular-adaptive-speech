@@ -61,11 +61,20 @@
 			<p>complete TASK</p>
 			<p>remove TASK</p>
 
-      <h2>Or submit utterance:</h2>
+      <h2>Or submit a new utterance:</h2>
       <div class="view" >
         <form ng-submit="command(speechUtterance)">
           <input class="edit" ng-model="speechUtterance">
           <button type="submit" >Command</button>
+        </form>
+      </div>
+
+      <h2>Last recognised utterance:</h2>
+      <div class="view" >
+        <form ng-submit="correctUtterance(lastUtterance)">
+          <input class="edit" ng-model="lastUtterance">
+          <button type="submit" >Correct</button>
+	      	<h3>Is this correct? Tell us what did you really mean!</h3>
         </form>
       </div>
 
