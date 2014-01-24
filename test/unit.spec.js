@@ -216,114 +216,133 @@ describe('adaptive.speech', function() {
 
       
 
-  // describe('speechrecognition directive - object', function() {
-  //   var elm, scope, calledCount;
+  describe('speechrecognition directive - object', function() {
+    var elm, scope, calledCount;
+    var rootscope;
 
-  //   beforeEach(inject(function($rootScope, $compile) {
-  //     elm = angular.element(
-  //       '<li ng-class="{completed: todo.completed, editing: todo == editedTodo}">' +
-  //         '<div class="view" speechrecognition="{\'tasks\': mockObject, \'reference\': todo.title}">' +
-  //           '<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="todoCompleted(todo)">' +
-  //           '<label ng-dblclick="editTodo(todo)">{{todo.title}}</label>' +
-  //           '<button class="destroy" ng-click="removeTodo(todo)"></button>' +
-  //         '</div>' +
-  //         '<form ng-submit="doneEditing(todo)">' +
-  //           '<input class="edit" ng-model="todo.title" todo-blur="doneEditing(todo)" todo-focus="todo == editedTodo">' +
-  //         '</form>' +
-  //       '</li>'
-  //     );
+    beforeEach(module('adaptive.speech'));
 
-  //     scope = $rootScope;
+    beforeEach(inject(function($rootScope) {
+      rootScope = $rootScope;
+      spyOn(rootScope, '$on').andCallThrough();
+      spyOn(rootScope, '$emit').andCallThrough();
+    }));
 
-  //     scope.todo = {
-  //       title: 'something',
-  //       completed: false
-  //     };
+    beforeEach(inject(function($rootScope, $compile) {
 
-  //     scope.mockObject = {
-  //       'regex': /^complete .+/gi,
-  //       'lang': 'en-US',
-  //       'call': function(utterance){
-  //         calledCount += 1;
-  //       }
-  //     };
+      elm = angular.element(
+        '<li ng-class="{completed: todo.completed, editing: todo == editedTodo}">' +
+          '<div class="view" speechrecognition="{\'tasks\': mockObject, \'reference\': todo.title}">' +
+            '<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="todoCompleted(todo)">' +
+            '<label ng-dblclick="editTodo(todo)">{{todo.title}}</label>' +
+            '<button class="destroy" ng-click="removeTodo(todo)"></button>' +
+          '</div>' +
+          '<form ng-submit="doneEditing(todo)">' +
+            '<input class="edit" ng-model="todo.title" todo-blur="doneEditing(todo)" todo-focus="todo == editedTodo">' +
+          '</form>' +
+        '</li>'
+      );
 
-  //     $compile(elm)(scope);
-  //     scope.$digest();
-  //   }));
+      scope = $rootScope;
 
-  //   it('should have called rootScope.$on', function(){
-  //     expect(rootScope.$on).toHaveBeenCalled();
-  //   });
+      scope.todo = {
+        title: 'something',
+        completed: false
+      };
 
-  //   it('should call a function after recognition', function() {
-  //     calledCount = 0;
-  //     var mockUtterance = {'lang': 'en-US', 'utterance': 'complete something'};
+      scope.mockObject = {
+        'regex': /^complete .+/gi,
+        'lang': 'en-US',
+        'call': function(utterance){
+          calledCount += 1;
+        }
+      };
 
-  //     rootScope.$broadcast('adaptive.speech:utterance', mockUtterance);
-  //     expect(calledCount).toEqual(1);
-  //   });
+      $compile(elm)(scope);
+      scope.$digest();
+    }));
 
-  // });
+    it('should have called rootScope.$on', function(){
+      expect(rootScope.$on).toHaveBeenCalled();
+    });
+
+    it('should call a function after recognition', function() {
+      calledCount = 0;
+      var mockUtterance = {'lang': 'en-US', 'utterance': 'complete something'};
+
+      rootScope.$emit('adaptive.speech:utterance', mockUtterance);
+      expect(calledCount).toEqual(1);
+    });
+
+  });
 
 
-  // describe('speechrecognition directive - array', function() {
-  //   var elm, scope, calledCount;
+  describe('speechrecognition directive - array', function() {
+    var elm, scope, calledCount;
+    var rootscope;
 
-  //   beforeEach(inject(function($rootScope, $compile) {
-  //     elm = angular.element(
-  //       '<li ng-class="{completed: todo.completed, editing: todo == editedTodo}">' +
-  //         '<div class="view" speechrecognition="{\'tasks\': mockArray, \'reference\': todo.title}">' +
-  //           '<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="todoCompleted(todo)">' +
-  //           '<label ng-dblclick="editTodo(todo)">{{todo.title}}</label>' +
-  //           '<button class="destroy" ng-click="removeTodo(todo)"></button>' +
-  //         '</div>' +
-  //         '<form ng-submit="doneEditing(todo)">' +
-  //           '<input class="edit" ng-model="todo.title" todo-blur="doneEditing(todo)" todo-focus="todo == editedTodo">' +
-  //         '</form>' +
-  //       '</li>'
-  //     );
+    beforeEach(module('adaptive.speech'));
 
-  //     scope = $rootScope;
+    beforeEach(inject(function($rootScope) {
+      rootScope = $rootScope;
+      spyOn(rootScope, '$on').andCallThrough();
+      spyOn(rootScope, '$emit').andCallThrough();
+    }));
 
-  //     scope.todo = {
-  //       title: 'something',
-  //       completed: false
-  //     };
+    beforeEach(inject(function($rootScope, $compile) {
+      elm = angular.element(
+        '<li ng-class="{completed: todo.completed, editing: todo == editedTodo}">' +
+          '<div class="view" speechrecognition="{\'tasks\': mockArray, \'reference\': todo.title}">' +
+            '<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="todoCompleted(todo)">' +
+            '<label ng-dblclick="editTodo(todo)">{{todo.title}}</label>' +
+            '<button class="destroy" ng-click="removeTodo(todo)"></button>' +
+          '</div>' +
+          '<form ng-submit="doneEditing(todo)">' +
+            '<input class="edit" ng-model="todo.title" todo-blur="doneEditing(todo)" todo-focus="todo == editedTodo">' +
+          '</form>' +
+        '</li>'
+      );
 
-  //     scope.mockArray = [{
-  //       'regex': /^complete .+/gi,
-  //       'lang': 'en-US',
-  //       'call': function(utterance){
-  //         calledCount += 1;
-  //       }
-  //     },{
-  //       'regex': /^remove .+/gi,
-  //       'lang': 'en-US',
-  //       'call': function(utterance){
-  //         calledCount += 1;
-  //       }
-  //     }];
+      scope = $rootScope;
 
-  //     $compile(elm)(scope);
-  //     scope.$digest();
-  //   }));
+      scope.todo = {
+        title: 'something',
+        completed: false
+      };
 
-  //   it('should have called rootScope.$on', function(){
-  //     expect(rootScope.$on).toHaveBeenCalled();
-  //   });
+      scope.mockArray = [{
+        'regex': /^complete .+/gi,
+        'lang': 'en-US',
+        'call': function(utterance){
+          calledCount += 1;
+        }
+      },{
+        'regex': /^remove .+/gi,
+        'lang': 'en-US',
+        'call': function(utterance){
+          calledCount += 1;
+        }
+      }];
 
-  //   it('should call a function after recognition', function() {
-  //     calledCount = 0;
-  //     var mockUtterance1 = {'lang': 'en-US', 'utterance': 'complete something'};
-  //     var mockUtterance2 = {'lang': 'en-US', 'utterance': 'remove something'};
+      $compile(elm)(scope);
+      scope.$digest();
+    }));
 
-  //     rootScope.$broadcast('adaptive.speech:utterance', mockUtterance1);
-  //     expect(calledCount).toEqual(1);
+    it('should have called rootScope.$on', function(){
+      expect(rootScope.$on).toHaveBeenCalled();
+    });
 
-  //     rootScope.$broadcast('adaptive.speech:utterance', mockUtterance2);
-  //     expect(calledCount).toEqual(2);
-  //   });
+    it('should call a function after recognition', function() {
+      calledCount = 0;
+      var mockUtterance1 = {'lang': 'en-US', 'utterance': 'complete something'};
+      var mockUtterance2 = {'lang': 'en-US', 'utterance': 'remove something'};
 
-  // });
+      rootScope.$emit('adaptive.speech:utterance', mockUtterance1);
+      expect(calledCount).toEqual(1);
+
+      rootScope.$emit('adaptive.speech:utterance', mockUtterance2);
+      expect(calledCount).toEqual(2);
+    });
+
+  });
 });
