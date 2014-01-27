@@ -37,6 +37,75 @@ var callCommands = function(tasks, DEST_LANG, utterance, reference){
  */
 var adaptive = angular.module('adaptive.speech', []);
 
+adaptive.provider('$speechCorrection', function() {
+
+  this.$get = function() {
+
+    var correctionMap = {};
+
+    var addUtterance = function(utterance, correction, lang){
+      correctionMap[lang] = correctionMap[lang] || {};
+      correctionMap[lang][utterance] = correction;
+    };
+
+    var removeUtterance = function(utterance, lang){
+      delete correctionMap.lang[utterance];
+    };
+
+    var addLangMap = function(lang, map){
+      correctionMap[lang] = correctionMap[lang] || {};
+      correctionMap[lang] = map;
+    };
+
+    var clearLangMap = function(lang){
+      delete correctionMap[lang];
+    };
+
+    var getCorrectionMap = function(){
+      return correctionMap;
+    };
+
+    var getLangMap = function(lang){
+      return correctionMap[lang];
+    };
+
+    var getCorrection = function(utterance, lang){
+      return ((correctionMap[lang] && correctionMap[lang][utterance]) || utterance);
+    };
+
+    return {
+      addUtterance: function(utterance, correction, lang){
+        addUtterance(utterance, correction, lang);
+      },
+
+      removeUtterance: function(utterance, lang){
+        removeUtterance(utterance, lang);
+      },
+
+      addLangMap: function(lang, map){
+        addLangMap(lang, map);
+      },
+
+      clearLangMap: function(lang){
+        clearLangMap(lang);
+      },
+
+      getCorrectionMap: function(){
+        return getCorrectionMap();
+      },
+
+      getLangMap: function(lang){
+        return getLangMap(lang);
+      },
+
+      getCorrection: function(utterance, lang){
+        return getCorrection(utterance, lang);
+      }
+    };
+
+  };
+});
+
 adaptive.provider('$speechSynthetis', function() {
 
   this.corsProxyServer = 'http://www.corsproxy.com/';
@@ -124,7 +193,7 @@ adaptive.provider('$speechRecognition', function() {
   * to for example paying attention and listening to what the user says, or it can
   * react on specific callbacks.
   */
-  this.$get = ['$rootScope', '$speechSynthetis', function($rootScope, $speechSynthetis) {
+  this.$get = ['$rootScope', '$speechSynthetis', '$speechCorrection', function($rootScope, $speechSynthetis, $speechCorrection) {
 
     var DEST_LANG = this.DEST_LANG;
 
@@ -197,6 +266,7 @@ adaptive.provider('$speechRecognition', function() {
     };
 
     var command = function(utterance){
+      utterance = $speechCorrection.getCorrection(utterance, DEST_LANG);
       $rootScope.$emit('adaptive.speech:utterance', {'lang': DEST_LANG, 'utterance': utterance});
     };
 

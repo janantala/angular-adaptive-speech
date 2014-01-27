@@ -7,7 +7,7 @@
  * - retrieves and persists the model via the todoStorage service
  * - exposes the model to the template and provides event handlers
  */
-todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage, filterFilter, $speechSynthetis, $speechRecognition) {
+todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage, filterFilter, $speechSynthetis, $speechRecognition, $speechCorrection) {
   var todos = $scope.todos = todoStorage.get();
 
   $scope.newTodo = '';
@@ -132,19 +132,18 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
     $scope.speechUtterance = '';
   };
 
-  $scope.correctUtterance = function(utterance) {
-    
-    if (!$scope.lastUtterance || utterance) {
+  $scope.correctUtterance = function(utterance, correction, lang) {
+    if (!utterance || !correction || !lang) {
       return false;
     }
 
-    // TODO correctUtterance 
-    
-    $scope.command(utterance);
+    $speechCorrection.addUtterance(utterance, correction, lang);
+
+    $scope.command(correction);
     $scope.newUtterance = '';
   };
 
-  var LANG = 'en-US';
+  $scope.LANG = 'en-US';
   $speechRecognition.onstart(function(e){
     $speechSynthetis.speak('Yes? How can I help you?', 'en-US');
   });
@@ -152,7 +151,7 @@ todomvc.controller('TodoCtrl', function TodoCtrl($scope, $location, todoStorage,
     var error = (e.error || '');
     alert('An error occurred ' + error);
   });
-  // $speechRecognition.setLang(LANG);
+  // $speechRecognition.setLang($scope.LANG);
   $speechRecognition.listen();
 
   $speechRecognition.onUtterance(function(utterance){
