@@ -1,8 +1,6 @@
-# adaptive-speech v0.2.0 [![Build Status](https://travis-ci.org/angular-adaptive/adaptive-speech.png?branch=master)](https://travis-ci.org/angular-adaptive/adaptive-speech)
+# adaptive-speech v0.3.0 [![Build Status](https://travis-ci.org/angular-adaptive/adaptive-speech.png?branch=master)](https://travis-ci.org/angular-adaptive/adaptive-speech)
 
-This module allows you to control web app using speech commands. It's based on Chrome's speech recognition API.
-
-Module is still under development, but you can use it today.
+This module allows you to control web app using voice commands. It's based on Chrome's speech recognition API.
 
 ### Demo
 
@@ -16,7 +14,7 @@ We recomend you to read:
 
 # Requirements
 
-- AngularJS v 1.0+
+- AngularJS v ~1.2.x
 
 # Usage
 
@@ -45,10 +43,10 @@ Add the adaptive.speech module as a dependency to your application module:
 var myAppModule = angular.module('MyApp', ['adaptive.speech']);
 ```
 
-and include $speechRecognition service as a dependency to your controller:
+and include $speechRecognition, $speechSynthetis, $speechCorrection service as a dependency to your controller:
 
 ```js
-angular.module('MyApp').controller('MainCtrl', function ['$scope', '$speechRecognition', ($scope, $speechRecognition) {
+angular.module('MyApp').controller('MainCtrl', function ['$scope', '$speechRecognition, $speechSynthetis', ($scope, $speechRecognition, $speechSynthetis) {
 
 }]);
 ```
@@ -56,21 +54,19 @@ angular.module('MyApp').controller('MainCtrl', function ['$scope', '$speechRecog
 To start speech recognition run from controller:
 
 ```js
-var LANG = 'en-US';
 $speechRecognition.onstart(function(){
-  $speechRecognition.speak('Yes? How can I help you?');
+  $speechSynthetis.speak('Yes? How can I help you?', 'en-UK');
 });
-$speechRecognition.payAttention();
-$speechRecognition.setLang(LANG);
+$speechRecognition.setLang('en-UK'); // Default value is en-US
 $speechRecognition.listen();
 ```
 
-Apply the directive to your elements where *thing* is keyword reference:
+Apply the directive to your elements where *reference* is keyword reference:
 
 ```html
 <ul>
-    <li ng-repeat="thing in things" speechrecognition="{'tasks': recognition['en-US']['listTasks'], 'thing': thing}">
-        {{thing}}
+    <li ng-repeat="todo in todos | filter:statusFilter track by $index" speechrecognition="{'tasks': recognition['en-US']['listTasks'], 'reference': todo}">
+        {{todo}}
     </li>
 </ul>
 ```
@@ -112,6 +108,10 @@ myAppModule.controller('MyController', function($scope) {
 });
 ```
 
+# APIs
+
+Check out [API docs](api.md).
+
 # Testing
 
 We use karma and jshint to ensure the quality of the code. The easiest way to run these checks is to use grunt:
@@ -135,4 +135,4 @@ Please respect the code style in place.
 
 The MIT License
 
-Copyright (c) 2013 [Jan Antala](http://www.janantala.com)
+Copyright (c) 2014 [Jan Antala](http://www.janantala.com)

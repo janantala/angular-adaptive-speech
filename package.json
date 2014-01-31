@@ -1,6 +1,6 @@
 {
   "name": "angular-adaptive-speech",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "This module allows you to control web app using speech commands.",
   "author": "https://github.com/angular-adaptive/adaptive-speech/graphs/contributors",
   "license": "MIT",
@@ -17,12 +17,15 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-karma": "*",
-    "grunt-contrib-jshint": "~0.2.0",
-    "grunt-conventional-changelog": "~1.0.0",
+    "grunt": "~0.4.2",
+    "karma": "~0.11.x",
+    "grunt-karma": "~0.7.x",
+    "karma-jasmine": "~0.1.5",
+    "karma-firefox-launcher": "~0.1.x",
+    "grunt-contrib-jshint": "~0.4.x",
+    "grunt-conventional-changelog": "~1.0.x",
     "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-concat": "~0.3.x",
     "load-grunt-tasks" : "~0.2.0"
   },
   "scripts": {}

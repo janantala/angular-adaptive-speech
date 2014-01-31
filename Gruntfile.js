@@ -18,7 +18,7 @@ module.exports = function (grunt) {
       banner: '/*!\n' +
         ' * <%= pkg.name %> v<%= pkg.version %>\n' +
         ' * The MIT License\n' +
-        ' * Copyright (c) 2013 Jan Antala\n' +
+        ' * Copyright (c) 2014 Jan Antala\n' +
         ' */'
     },
     uglify: {
