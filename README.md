@@ -1,8 +1,6 @@
-# adaptive-speech v0.2.0 [![Build Status](https://travis-ci.org/angular-adaptive/adaptive-speech.png?branch=master)](https://travis-ci.org/angular-adaptive/adaptive-speech)
+# adaptive-speech v0.3.0 [![Build Status](https://travis-ci.org/angular-adaptive/adaptive-speech.png?branch=master)](https://travis-ci.org/angular-adaptive/adaptive-speech)
 
-This module allows you to control web app using speech commands. It's based on Chrome's speech recognition API.
-
-Module is still under development, but you can use it today.
+This module allows you to control web app using voice commands. It's based on Chrome's speech recognition API.
 
 ### Demo
 
@@ -137,4 +135,4 @@ Please respect the code style in place.
 
 The MIT License
 
-Copyright (c) 2013 [Jan Antala](http://www.janantala.com)
+Copyright (c) 2014 [Jan Antala](http://www.janantala.com)
