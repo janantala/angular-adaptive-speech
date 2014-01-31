@@ -39,9 +39,15 @@ var adaptive = angular.module('adaptive.speech', []);
 
 adaptive.provider('$speechCorrection', function() {
 
+  this.STORAGE_ID = 'adaptive:speech:correction';
   this.$get = function() {
 
-    var correctionMap = {};
+    var STORAGE_ID = this.STORAGE_ID;
+    var correctionMap = JSON.parse(localStorage.getItem(STORAGE_ID) || '{}');
+
+    var save = function(STORAGE_ID, correctionMap){
+      localStorage.setItem(STORAGE_ID, JSON.stringify(correctionMap));
+    };
 
     var addUtterance = function(utterance, correction, lang){
       correctionMap[lang] = correctionMap[lang] || {};
@@ -76,18 +82,22 @@ adaptive.provider('$speechCorrection', function() {
     return {
       addUtterance: function(utterance, correction, lang){
         addUtterance(utterance, correction, lang);
+        save(STORAGE_ID, correctionMap);
       },
 
       removeUtterance: function(utterance, lang){
         removeUtterance(utterance, lang);
+        save(STORAGE_ID, correctionMap);
       },
 
       addLangMap: function(lang, map){
         addLangMap(lang, map);
+        save(STORAGE_ID, correctionMap);
       },
 
       clearLangMap: function(lang){
         clearLangMap(lang);
+        save(STORAGE_ID, correctionMap);
       },
 
       getCorrectionMap: function(){
